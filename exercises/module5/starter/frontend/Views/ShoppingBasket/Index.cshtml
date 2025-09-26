@@ -1,0 +1,143 @@
+﻿@model IEnumerable<GloboTicket.Frontend.Models.View.BasketLineViewModel>
+
+@{
+    decimal originalTotal = Model.Sum(bl => bl.OriginalPrice * bl.Quantity);
+    decimal currentTotal = Model.Sum(bl => bl.Price * bl.Quantity);
+    bool hasSpecialOffers = Model.Any(bl => bl.IsOnSpecialOffer);
+    
+    // Admin costs calculation
+    bool shouldApplyAdminCost = ViewBag.ShouldApplyAdminCost != null && ViewBag.ShouldApplyAdminCost;
+    decimal adminCostAmount = ViewBag.AdminCostAmount != null ? ViewBag.AdminCostAmount : 0;
+    int adminCostPercentage = ViewBag.AdminCostPercentage != null ? ViewBag.AdminCostPercentage : 5;
+    
+    // Calculate final total with admin costs
+    decimal finalTotal = currentTotal;
+    if (shouldApplyAdminCost)
+    {
+        finalTotal += adminCostAmount;
+    }
+    
+    // If promo code is applied, use that as the final total
+    if (ViewBag.PromoCodeApplied != null && ViewBag.PromoCodeApplied)
+    {
+        finalTotal = ViewBag.TotalWithDiscount;
+    }
+}
+
+<div class="row mb-3">
+    <div class="col-12">
+        @if (shouldApplyAdminCost)
+        {
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> An administration fee of @adminCostPercentage% will be added to orders under $500.
+            </div>
+        }
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr class="columnHeader">
+            <th>EVENT NAME</th>
+            <th>DATE</th>
+            <th>VENUE</th>
+            <th>PRICE PER TICKET</th>
+            <th>QUANTITY</th>
+            <th>TOTAL</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @Html.EditorForModel()
+        <tr>
+            <td colspan="4">
+                <a asp-controller="EventCatalog" asp-action="Index">
+                    <img class="backIcon" src="~/img/arrow-down.svg" /> Back to event catalog
+                </a>
+            </td>
+            @if (hasSpecialOffers)
+            {
+                <td class="bold big">
+                    <div style="margin-bottom: 5px;">
+                        <span style="font-size: 0.8em; color: #777;">Original subtotal:</span>
+                        <span style="text-decoration: line-through; color: #aaa">$@originalTotal</span>
+                    </div>
+                    <div style="margin-bottom: 5px;">
+                        <span style="font-size: 0.8em; color: #777;">Special offer subtotal:</span>
+                        <span style="color: red; font-weight: bold;">$@currentTotal</span>
+                    </div>
+                    
+                    @if (shouldApplyAdminCost)
+                    {
+                        <div style="margin-bottom: 5px;">
+                            <span style="font-size: 0.8em; color: #777;">Administration cost (@adminCostPercentage%):</span>
+                            <span style="color: #555; font-weight: bold;">$@adminCostAmount</span>
+                        </div>
+                    }
+                    
+                    @if (ViewBag.PromoCodeApplied != null && ViewBag.PromoCodeApplied)
+                    {
+                        <div style="margin-top: 10px; padding: 5px; border: 1px dashed #999; background-color: #f9f9f9;">
+                            <span style="font-size: 0.8em; color: #777;">With promo code:</span><br />
+                            <span style="color: green; font-weight: bold;">$@ViewBag.TotalWithDiscount</span>
+                            <div class="savings-text">
+                                <small style="color: green;">
+                                    Total savings: $@(originalTotal - (decimal)ViewBag.TotalWithDiscount)
+                                </small>
+                            </div>
+                        </div>
+                    }
+                </td>
+            }
+            else
+            {
+                <td class="bold big">
+                    <div style="margin-bottom: 5px;">
+                        <span style="font-size: 0.8em; color: #777;">Subtotal:</span>
+                        <span style="font-weight: bold;">$@currentTotal</span>
+                    </div>
+                    
+                    @if (shouldApplyAdminCost)
+                    {
+                        <div style="margin-bottom: 5px;">
+                            <span style="font-size: 0.8em; color: #777;">Administration cost (@adminCostPercentage%):</span>
+                            <span style="color: #555; font-weight: bold;">$@adminCostAmount</span>
+                        </div>
+                    }
+                    
+                    @if (ViewBag.PromoCodeApplied != null && ViewBag.PromoCodeApplied)
+                    {
+                        <div style="margin-top: 10px; padding: 5px; border: 1px dashed #999; background-color: #f9f9f9;">
+                            <span style="font-size: 0.8em; color: #777;">Final total with promo code:</span><br />
+                            <span style="color: green; font-weight: bold;">$@ViewBag.TotalWithDiscount</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="margin-top: 5px;">
+                            <span style="font-size: 0.8em; color: #777;">Final total:</span><br />
+                            <span style="font-weight: bold;">$@finalTotal</span>
+                        </div>
+                    }
+                </td>
+            }
+        </tr>
+    </tbody>
+</table>
+
+@if(Model.Count() > 0)
+{
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form asp-action="ApplyPromoCode" method="post" class="form-inline">
+                <div class="form-group">
+                    <label for="promoCode" class="mr-2">Promo Code:</label>
+                    <input type="text" name="promoCode" id="promoCode" class="form-control mr-2" placeholder="Enter code (e.g., SAVE25)" />
+                    <button type="submit" class="btn btn-secondary">Apply</button>
+                </div>
+                <small class="form-text text-muted">Available codes: SAVE10, SAVE15, SAVE25</small>
+            </form>
+        </div>
+    </div>
+    <a asp-controller="Checkout" asp-action="Index" class="btn btn-primary">CHECKOUT</a>
+}
