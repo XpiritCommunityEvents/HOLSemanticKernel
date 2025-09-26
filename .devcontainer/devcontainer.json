@@ -1,0 +1,32 @@
+{
+  "name": "dotnet",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:9.0",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "humao.rest-client",
+        "ms-azuretools.vscode-docker",
+        "github.copilot",
+        "ms-mssql.mssql"
+      ]
+    }
+  },
+  "postStartCommand": "bash ./.devcontainer/post-start.sh",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": true,
+      "azureDnsAutoDetection": true,
+      "installDockerBuildx": true,
+      "installDockerComposeSwitch": true,
+      "version": "latest",
+      "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/devcontainers/features/dotnet:2": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/powershell:1": {},
+    "ghcr.io/devcontainers/features/azure-cli:1": {}
+  }
+}
