@@ -1,0 +1,73 @@
+name: Provision Participant environment
+
+on:
+  issues:
+    types:
+      - closed
+
+  workflow_dispatch:
+    inputs: 
+      githubhandle: 
+        required: true
+        type: text 
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest  
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Get issue creator
+      id: github_handle
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          if ("${{ github.event_name }}" == "issues") {
+            const subject = context.payload.issue;
+            if (subject.labels.find(l => l.name == "signup")) {
+              creator = subject.user.login;
+              console.log(`Issue creator: ${creator}`);
+              return creator;
+            }
+            throw new Error("Issue did not have a signup label");
+          }
+          return "${{ github.event.inputs.githubhandle }}";
+        
+    - name: Install GH Collab
+      run: |
+        gh extension install mislav/gh-repo-collab
+      env:
+        GH_TOKEN: ${{ secrets.VSLIVE_REPOCREATE }}
+
+    - name: Create Repository
+      env:
+        GH_TOKEN: ${{ secrets.VSLIVE_REPOCREATE }}
+      run: |
+        # Create clone of this repo for user
+        repo_name="XpiritCommunityEvents/attendeec2c-${{ steps.github_handle.outputs.result }}"
+        if gh repo view $repo_name &>/dev/null; then
+            echo "Repository $repo_name already exists."
+        else
+          echo "Repository $REPO_NAME does not exist."
+          gh repo create $repo_name \
+            --public \
+            --template ${{ github.repository }}
+        fi
+          
+    - name: Invite Member to Organization
+      env:
+        GH_TOKEN: ${{ secrets.VSLIVE_REPOCREATE }}
+      run: |
+        id=$(gh api users/${{ steps.github_handle.outputs.result }} --jq '.id')
+        gh api --method POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/XpiritCommunityEvents/invitations -F invitee_id=$id -f role='direct_member'
+
+    - name: Set Rights to Repo
+      env:
+        GH_TOKEN: ${{ secrets.VSLIVE_REPOCREATE }}
+      run: |
+        # Add user to newly cloned repo
+        gh repo-collab add XpiritCommunityEvents/attendeec2c-${{ steps.github_handle.outputs.result }} ${{ steps.github_handle.outputs.result }} --permission admin | cat
+    
