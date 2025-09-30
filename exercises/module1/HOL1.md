@@ -134,27 +134,3 @@ Create a quick scorecard: Tone, Clarity, Actionability, Factual control, Halluci
 
 > 💡 **Reflect:** Which model produced a more usable output? Which criteria mattered most for your scenario?
 
-## 7.Get Credentials for API Access
-
-**Goal:** Connect C# apps to GitHub Models (for Semantic Kernel, etc).
-
-### Steps
-1. On the [GitHub Models Marketplace](https://github.com/marketplace?type=models), click **GPT 5 Mini**  
-[Direct link](https://github.com/marketplace/models/azure-openai/gpt-5-mini)
-2. Click **Use this model**.
-3. Under **Configure Authentication**, click **Create Personal Access Token**.
-4. On the next screen, select **Public Repositories**.
-5. Ensure **Models: Read Only** is checked.
-6. Generate your token.  
-**Copy and store it securely.**
-7. Also record:
-- Token
-- Endpoint: `https://models.github.ai/inference`
-- Model: `openai/gpt-5-mini`
-
-```csharp
-// For C# SDK
-var token = "<your stored token>";
-var endpoint = "https://models.github.ai/inference";
-var model = "openai/gpt-5-mini";
-````
