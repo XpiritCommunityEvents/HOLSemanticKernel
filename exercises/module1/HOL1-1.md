@@ -1,6 +1,9 @@
+# Lab 1.1
+
 ## 1. Enable GitHub Models
 
 ### Step 1: Turn on Models in Your Repo
+
 1. Go to your **GitHub repository**.
 2. Click **Settings**.
 3. In the left menu, find and enable **Models**.
@@ -10,6 +13,7 @@
    ![](./images/Models-Menu.png)
 
 ### Step 2: Open the Playground
+
 1. Click **Models** in the top menu.
 2. Go to **Playground**.
 3. Select the **OpenAI GPT-4.1** model from the list.
@@ -19,24 +23,27 @@
 **Goal:** See how prompt wording (role, tone, detail) changes model responses—even with the same base question.
 
 ### Steps
+
 1. In **GitHub Models → Playground**, pick **OpenAI GPT-4.1**.
 2. Paste this user prompt:
 
-```
+```txt
 Write an email to a GloboTicket customer explaining a refund is approved for order #GT-48321.
 ```
+
 3. Add this to the **System Prompt** and re-run:
 
-```
+```txt
 You are a GloboTicket support agent. Tone: warm but concise. ≤120 words. Include refund amount and resolution time (3–5 business days).
 ```
 
 4. Re-run, each time changing only the **tone** in the system prompt:
-- “Use a formal tone of voice.”
-- “Use a 'pop rock fan' tone of voice.”
+   - “Use a formal tone of voice.”
+   - “Use a 'pop rock fan' tone of voice.”
+
 5. Add structure to the system prompt and re-run:
 
-```
+```txt
 Use greeting, 3 bullet points, closing.
 ```
 
@@ -47,9 +54,10 @@ Use greeting, 3 bullet points, closing.
 **Goal:** See how the temperature setting controls creativity and randomness.
 
 ### Steps
+
 1. Use this prompt:
 
-```
+```txt
 Suggest a place to eat before a concert at Madison Square Garden.
 ```
 
@@ -63,9 +71,10 @@ Then, set **temperature = 1.0** (creative/varied) and run again.
 **Goal:** Compare how `top_p` (nucleus sampling) and `temperature` change the variety and quality of responses.
 
 ### Steps
+
 1. Keep **temperature = 0.7**. Use:
 
-```
+```txt
 List 10 perks of buying early for GloboTicket shows.
 ```
 
@@ -81,14 +90,16 @@ List 10 perks of buying early for GloboTicket shows.
 **Goal:** Learn to reduce repetition and increase variety—important for lists and FAQs.
 
 ### Steps
+
 1. Grab a **venue policy** (Markdown) from your the exercise folder (e.g., Ziggo Dome).
 2. Paste this prompt and add your policy after `---`:
 
-```
+```txt
 ## From the policy below, generate 12 distinct customer FAQs with answers. Avoid repeating phrasing.
 ---
 [PASTE POLICY HERE]
 ```
+
 3. Set **frequency_penalty = 0**, **presence_penalty = 0** and run.
 4. Set **frequency_penalty = 0.7**, **presence_penalty = 0.7** and run again.
 
@@ -96,18 +107,21 @@ List 10 perks of buying early for GloboTicket shows.
 
 ---
 ## 6. Multi-Step Prompt Engineering
+
 **Goal:** Go from free text → structured JSON → audience-specific outputs → model validation, just like in real-world LLM-powered apps.
 
 ### Steps
+
 1. Input: **One venue policy** (Markdown).
 2. Generate a summary
 
-```
+```txt
 Summarize this policy for support agents (≤120 words).
 ```
+
 3. Extract strict JSON
 
-```
+```txt
 Extract into JSON with keys: {bag_max_cm:[L,W,H], backpacks_rule, bottle_empty_allowed, reentry, cashless, service_animals_only, accessibility:{wheelchair,lifts,hearing_loops}}. Output ONLY JSON.
 ```
 
@@ -118,19 +132,20 @@ Extract into JSON with keys: {bag_max_cm:[L,W,H], backpacks_rule, bottle_empty_a
 **Goal:** Compare strengths and weaknesses across models—speed, tone, reasoning, creativity.
 
 ### Steps
+
 1. Pick **two different models** in GitHub Models (e.g., OpenAI GPT-4.1 and Grok 3 Mini).
 2. Use this prompt for both:
 
-```
+```txt
 Draft a 100-word apology email for a payment outage impacting 2% of GloboTicket checkouts in EU on 2025-09-28. Include next steps & refund guidance.
 ```
+
 3. Have the model **self-evaluate**. Prompt:
 
-```
+```txt
 Create a quick scorecard: Tone, Clarity, Actionability, Factual control, Hallucinations.
 ```
 
 4. Optional: Prompt for a **PowerShell script** to send the email.
 
 > 💡 **Reflect:** Which model produced a more usable output? Which criteria mattered most for your scenario?
-
