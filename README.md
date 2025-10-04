@@ -2,6 +2,19 @@
 
 ---
 
+## Labs
+
+### Module 1 - LLM Introduction
+
+- [Lab 1.1](./exercises/module1/HOL1-1.md)
+- [Lab 1.2](./exercises/module1/HOL1-2.md)
+
+### Module 2 - Semantic Kernel Basics
+
+- [Lab 2.1](./exercises/module2/HOL2-1.md)
+
+---
+
 ## **Module I – LLM Introduction** (60 min)
 
 ### Theory (30 min)
