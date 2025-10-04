@@ -1,6 +1,6 @@
 # Lab 2.1
 
-In this module, we will introduce Semantic Kernel into your application to make communication with your LLMs more flexible and powerful.
+In this lab, we will introduce Semantic Kernel into your application to make communication with your LLMs more flexible and powerful.
 
 ## Add Semantic Kernel to your application
 
@@ -111,6 +111,8 @@ Your chat app is not very useful yet. As you have noticed, the LLM does not reme
 
 **Goal:** insert a system prompt just like we did in module 1.
 
+### Steps
+
 1. Just after initializing the `chatHistory` object, add the following statement:
 
     ```csharp
@@ -132,3 +134,35 @@ Your chat app is not very useful yet. As you have noticed, the LLM does not reme
 5. Run the application again and try asking the same question. How does it respond now?
 
 We will give the LLM "knowledge" about artists and tickets later.
+
+## Set prompt execution settings
+
+**Goal:** passing prompt execution settings like Temperature and Top-P to the LLM to control output.
+
+### Steps
+
+1. Create an instance of `AzureOpenAIPromptExecutionSettings` and set the parameters:
+
+    ```csharp
+    var executionSettings = new AzureOpenAIPromptExecutionSettings
+    {
+        MaxTokens = 500,
+        Temperature = 0.5,
+        TopP = 1.0,
+        FrequencyPenalty = 0.0,
+        PresencePenalty = 0.0
+    };
+    ```
+
+2. Add the `executionSettings` to the parameter list of
+
+    ```csharp
+    // ...
+    
+    var response = await chatCompletionService!.GetChatMessageContentsAsync(chatHistory, executionSettings);
+
+    //...
+    ```
+
+3. Run the application and confirm that it still works. Play around with the values of these parameters to see if there are any differences.
+

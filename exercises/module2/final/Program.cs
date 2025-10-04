@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 
 // Make sure to add ApiKey to your dotnet user secrets...
 // dotnet user-secrets set "ApiKey"="<your API key>" -p .\module2.csproj
@@ -22,6 +23,15 @@ var kernelBuilder = Kernel
     .AddAzureAIInferenceChatCompletion(model, token, new Uri(endpoint));
 
 var kernel = kernelBuilder.Build();
+
+var executionSettings = new AzureOpenAIPromptExecutionSettings
+{
+    MaxTokens = 500,
+    Temperature = 0.5,
+    TopP = 1.0,
+    FrequencyPenalty = 0.0,
+    PresencePenalty = 0.0
+};
 
 Console.WriteLine("Hi! I am your AI assistant. Talk to me:");
 
