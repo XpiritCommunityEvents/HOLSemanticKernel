@@ -1,6 +1,6 @@
 # Lab 1.2
 
-## 7.Get Credentials for API Access
+## 7. Get Credentials for API Access
 
 **Goal:** Connect C# apps to GitHub Models (for Semantic Kernel, etc).
 
@@ -43,6 +43,23 @@ Goal: It is important to keep the API token to your model safe. Otherwise people
 
 ```pwsh
 dotnet user-secrets set "ApiKey" "<key>" -p .\HolSemanticKernel.csproj
+```
+
+In order to read the secret value, we need a Nuget package:
+
+```pwsh
+dotnet add package Microsoft.Extensions.Configuration.UserSecrets
+```
+
+Then, at the top of your `Program.cs`, read the token from your configuration using `ConfigurationBuilder`:
+
+```csharp
+var config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddUserSecrets<Program>()
+    .Build();
+
+var token = config["ApiKey"];
 ```
 
 # Step 4 Use your Model
