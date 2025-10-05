@@ -154,12 +154,12 @@ We will give the LLM "knowledge" about artists and tickets later.
     };
     ```
 
-2. Add the `executionSettings` to the parameter list of
+2. Add the `executionSettings` and `kernel` to the parameter list of
 
     ```csharp
     // ...
     
-    var response = await chatCompletionService!.GetChatMessageContentsAsync(chatHistory, executionSettings);
+    var response = await chatCompletionService!.GetChatMessageContentsAsync(chatHistory, executionSettings, kernel);
 
     //...
     ```
@@ -176,7 +176,7 @@ We will give the LLM "knowledge" about artists and tickets later.
 
     ```csharp
     // streaming call
-    var responseStream = chatCompletionService!.GetStreamingChatMessageContentsAsync(chatHistory);
+    var responseStream = chatCompletionService!.GetStreamingChatMessageContentsAsync(chatHistory, executionSettings, kernel);
     await foreach (var response in responseStream)
     {
         Console.Write(response.Content);

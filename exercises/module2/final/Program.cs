@@ -1,4 +1,5 @@
-﻿using Microsoft.SemanticKernel;
+﻿using HOLSemanticKernel;
+using Microsoft.SemanticKernel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -22,6 +23,9 @@ var kernelBuilder = Kernel
     .CreateBuilder()
     .AddAzureAIInferenceChatCompletion(model, token, new Uri(endpoint));
 
+kernelBuilder.Plugins.AddFromType<DiscountPlugin>();
+kernelBuilder.Services.AddTransient<IFunctionInvocationFilter, AnonymousUserFilter>();
+
 var kernel = kernelBuilder.Build();
 
 var executionSettings = new AzureOpenAIPromptExecutionSettings
@@ -30,7 +34,8 @@ var executionSettings = new AzureOpenAIPromptExecutionSettings
     Temperature = 0.5,
     TopP = 1.0,
     FrequencyPenalty = 0.0,
-    PresencePenalty = 0.0
+    PresencePenalty = 0.0,
+    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
 };
 
 Console.WriteLine("Hi! I am your AI assistant. Talk to me:");
@@ -46,16 +51,29 @@ while (true)
 
     var prompt = Console.ReadLine();
 
+    // direct plugin call
+    // if (prompt!.Contains("discount"))
+    // {
+    //     var arguments = new KernelArguments { ["userName"] = "guest" };
+    //     var discount = await kernel.InvokeAsync<string>(
+    //         nameof(DiscountPlugin),
+    //         "get_discount_code",
+    //         arguments);
+    //     
+    //     Console.WriteLine(discount);
+    //     continue;
+    // }
+
     chatHistory.AddUserMessage(prompt!);
 
     // synchronous call
-    var response = await chatCompletionService!.GetChatMessageContentsAsync(chatHistory, executionSettings);
-    Console.WriteLine(response.Last().Content);
+    //var response = await chatCompletionService!.GetChatMessageContentsAsync(chatHistory, executionSettings, kernel);
+    // Console.WriteLine(response.Last().Content);
 
     // streaming call
-    // var responseStream = chatCompletionService!.GetStreamingChatMessageContentsAsync(chatHistory, executionSettings);
-    // await foreach (var response in responseStream)
-    // {
-    //     Console.Write(response.Content);
-    // }
+    var responseStream = chatCompletionService!.GetStreamingChatMessageContentsAsync(chatHistory, executionSettings, kernel);
+    await foreach (var response in responseStream)
+    {
+        Console.Write(response.Content);
+    }
 }
