@@ -1,13 +1,11 @@
 using System.ComponentModel;
-using Microsoft.SemanticKernel;
 
-namespace HOLSemanticKernel;
+namespace HolAgentFramework;
 
-public class DiscountPlugin()
+public class DiscountTool
 {
-    [KernelFunction("get_discount_code")]
     [Description("Generate a simple GloboTicket discount code for a user.")]
-    public string GetDiscountCode([Description("The name of the user")] string userName = "guest")
+    public static string GetDiscountCode([Description("The name of the user")] string userName = "guest")
     {
         var prefix = userName.ToUpper().Substring(0, Math.Min(4, userName.Length));
         var code = $"{prefix}{Random.Shared.Next(1000, 9999)}";

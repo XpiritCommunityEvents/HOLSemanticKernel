@@ -1,37 +1,39 @@
 # Lab 2.1
 
-In this lab, we will introduce Semantic Kernel into your application to make communication with your LLMs more flexible and powerful.
+In this lab, we will introduce the Agent Framework into your application to make communication with your LLMs more flexible and powerful.
 
-## Add Semantic Kernel to your application
+## Add Agent Framework to your application
 
-**Goal:** Add the necessary dependencies and initialization code for using Semantic Kernel to your application.
+**Goal:** Add the necessary dependencies and initialization code for using Agent Framework to your application.
 
-> 👉🏻 We assume that you continue to work in the application in `main/src/HolSemanticKernel`.
+> 👉🏻 We assume that you continue to work in the application in `main/src/HolAgentFramework`.
 
 ### Steps
 
 1. Add the necessary Nuget packages to your application. In your Terminal window, type:
 
     ```pwsh
-    dotnet add package Microsoft.SemanticKernel
+    dotnet add package Microsoft.Agents.AI --prerelease
 
-    dotnet add package Microsoft.SemanticKernel.Connectors.AzureAIInference --prerelease
+    dotnet add package Microsoft.Agents.AI.OpenAI --prerelease
     ```
 
-    This adds the base package for using Semantic Kernel plus a separate extension package for connecting with Azure AI Inference models.
+    This adds the base package for using Agent Framework plus a separate extension package for connecting with OpenAI Inference models. `Microsoft.Agents.AI` has a transitive dependency on `Microsoft.Extensions.AI`, which brings integration with LLM models to the .NET framework.
 
-2. Leave the code for reading the API token from user secrets in your code, but remove the rest of the code added in the previous lab that works with the `ChatCompletionsClient`.
+2. Leave the code for reading the API token from user secrets in your code, but remove the rest of the code added in the previous lab that works with the `ChatCompletionsClient`. You can also remove the nuget packages `Azure.AI.Inference` and `Azure.Identity` from your program as we're going to make more generic and pluggable code with Agent Framework.  
+
 3. Replace the removed code with:
 
     ```csharp
-    var kernelBuilder = Kernel
-        .CreateBuilder()
-        .AddAzureAIInferenceChatCompletion(model, token, new Uri(endpoint));
+    var chatClient = new ChatClient(model, new ApiKeyCredential(token), new OpenAIClientOptions()
+    {
+        Endpoint = new Uri(endpoint)
+    });
 
-    var kernel = kernelBuilder.Build();
+    var agent = chatClient.CreateAIAgent(name: "GloboTicket Assistant");
     ```
 
-    We now have an instance of the Semantic Kernel to interact with. The `AddAzureAIInferenceChatCompletion` comes from the `Microsoft.SemanticKernel.Connectors.AzureAIInference`. Semantic Kernel is pluggable, so by adding connector packages for other AI vendors, you can mix and match them using the kernel instance.
+    We now have an instance of a `ChatClient` from the `Microsoft.Extensions.AI` framework and used the `CreateAIAgent` extension method from the `Microsoft.Agents.AI` package to wrap it in a `ChatClientAgent` instance. We will interact with this agent from now on.
 
 ## Build a simple chat client
 
@@ -40,7 +42,7 @@ In this lab, we will introduce Semantic Kernel into your application to make com
 1. Add the following loop to your application:
 
     ```csharp
-
+    Console.OutputEncoding = Encoding.UTF8; // the LLM may respond with emojis, so we need UTF8 support
     Console.WriteLine("Hi! I am your AI assistant. Talk to me:");
 
     while (true)
@@ -49,9 +51,9 @@ In this lab, we will introduce Semantic Kernel into your application to make com
 
         var prompt = Console.ReadLine();
 
-        var response = await kernel.InvokePromptAsync(prompt);
-    
-        Console.WriteLine(response.GetValue<string>());
+        // synchronous call
+        var response = await agent.RunAsync(prompt!);
+        Console.WriteLine(response.Text);
     }
     ```
 
@@ -69,43 +71,34 @@ In this lab, we will introduce Semantic Kernel into your application to make com
 
     How does the LLM repond?
 
-## Add chat history
+## Add history using a Thread
 
 **Goal:** include the chat history in your interaction with the LLM.
 
-Your chat app is not very useful yet. As you have noticed, the LLM does not remember anything of what you previously said. We need to add the chat history as context every time we call the LLM to generate content.
+Your chat app is not very useful yet. As you have noticed, the LLM does not remember anything of what you previously said. We need to add the chat history as context every time we call the LLM to generate content. In Agent Framework, this is called a Thread.
 
 ### Steps
 
-1. Instantiate a `ChatHistory` object just before the `while` loop. It will hold the conversation history between the user and the LLM.
+1. Obtain an `AgentThread` object just before the `while` loop, and after creating the agent. It will hold the conversation history between the user and the LLM.
 
     ```csharp
-    var history = new ChatHistory();
+    var agent = chatClient.CreateAIAgent(name: "GloboTicket Assistant");
+    var thread = agent.GetNewThread(); // <-- add this
+
+    while (true)
     ```
 
-2. Now instead of interacting with the `kernel` instance directly, ask it for an instance of `IChatCompletionService`:
+2. Now, add the `thread` variable to the `agent.RunAsync` method's parameter list.  
 
     ```csharp
-    var chatCompletionService = kernel.Services.GetService<IChatCompletionService>();
-    ```
-
-    We're using the kernel's dependency injection container to obtain a reference to a service that implements the `IChatCompletionService`.
-
-3. Inside the `while` loop, replace the call to `kernel.InvokePromptAsync()` with:
-
-    ```csharp
-    chatHistory.AddUserMessage(prompt!);
+    var response = await agent.RunAsync(prompt!, thread);
     
-    var response = await chatCompletionService!.GetChatMessageContentsAsync(chatHistory);
-    
-    Console.WriteLine(response.Last().Content);
+    Console.WriteLine(response.Text);
     ```
 
-    Inspect the code. We are using the `chatHistory` object here to keep track of the conversation. Every prompt is added as a _user message_ to the list and we're supplying this history to the `GetChatMessageContentsAsync` method.
+    Inspect the code. The agent will use the `AgentThread` to keep track of the conversation, so it knows what you said before. Agent Framework will also add every response from the LLM to this `thread` as an _assistant message_. This way you can build a full conversation history where you can see who said what.
 
-    Semantic Kernel will also add every response from the LLM to this `chatHistory` object as an _assistant message_. This way you can build a full conversation history where you can see who said what.
-
-4. Run the application and retry a conversation with the LLM where you refer to something you said earlier. Does this feel more like a real conversation?
+3. Run the application and retry a conversation with the LLM where you refer to something you said earlier. Does this feel more like a real conversation?
 
 ## Give the LLM a system prompt
 
@@ -113,11 +106,13 @@ Your chat app is not very useful yet. As you have noticed, the LLM does not reme
 
 ### Steps
 
-1. Just after initializing the `chatHistory` object, add the following statement:
+1. Just before initializing the `agent` object, create a `string` which holds the system instructions and pass it to the `CreateAIAgent` method:
 
     ```csharp
-    var chatHistory = new ChatHistory();
-    chatHistory.AddSystemMessage("You are a digital assistant for GloboTicket, a concert ticketing company. You help customers with their ticket purchasing. Tone: warm and friendly, but to the point.");
+    var instructions = 
+        "You are a digital assistant for GloboTicket, a concert ticketing company. You help customers with their ticket purchasing. Tone: warm and friendly, but to the point.";
+
+    var agent = chatClient.CreateAIAgent(instructions, name: "GloboTicket Assistant");
     ```
 
 2. Run the application again. Can you notice a difference in how it responds?
@@ -127,13 +122,13 @@ Your chat app is not very useful yet. As you have noticed, the LLM does not reme
 4. Improve the system prompt:
 
     ```csharp
-    var chatHistory = new ChatHistory();
-    chatHistory.AddSystemMessage("You are a digital assistant for GloboTicket, a concert ticketing company. You help customers with their ticket purchasing. Tone: warm and friendly, but to the point.  Do not make things up when you don't know the answer. Just tell the user that you don't know the answer based on your knowledge.");
+    var instructions = 
+        "You are a digital assistant for GloboTicket, a concert ticketing company. You help customers with their ticket purchasing. Tone: warm and friendly, but to the point.  Do not make things up when you don't know the answer. Just tell the user that you don't know the answer based on your knowledge.";
     ```
 
 5. Run the application again and try asking the same question. How does it respond now?
 
-We will give the LLM "knowledge" about artists and tickets later.
+We will give the LLM "knowledge" about artists and tickets in later labs.
 
 ## Set prompt execution settings
 
@@ -141,30 +136,33 @@ We will give the LLM "knowledge" about artists and tickets later.
 
 ### Steps
 
-1. Create an instance of `AzureOpenAIPromptExecutionSettings` and set the parameters:
+1. Create an instance of `ChatClientAgentRunOptions` and set the parameters:
 
     ```csharp
-    var executionSettings = new AzureOpenAIPromptExecutionSettings
+    var options = new ChatClientAgentRunOptions
     {
-        MaxTokens = 500,
-        Temperature = 0.5,
-        TopP = 1.0,
-        FrequencyPenalty = 0.0,
-        PresencePenalty = 0.0
+        ChatOptions = new()
+        {
+            MaxOutputTokens = 500,
+            Temperature = 0.5f,
+            TopP = 1.0f,
+            FrequencyPenalty = 0.0f,
+            PresencePenalty = 0.0f
+        }
     };
     ```
 
-2. Add the `executionSettings` and `kernel` to the parameter list of
+2. Add the `options` to the parameter list of `agent.RunAsync`
 
     ```csharp
     // ...
     
-    var response = await chatCompletionService!.GetChatMessageContentsAsync(chatHistory, executionSettings, kernel);
+    var response = await agent.RunAsync(prompt!, thread, options);
 
     //...
     ```
 
-3. Run the application and confirm that it still works. Play around with the values of these parameters to see if there are any differences.
+3. Run the application and confirm that it still works. Play around with the values of these parameters to see if there are any differences in how the LLM responds.
 
 ## Use streaming responses
 
@@ -172,14 +170,14 @@ We will give the LLM "knowledge" about artists and tickets later.
 
 ### Steps
 
-1. Replace the call to `GetChatMessageContentsAsync()` with `GetStreamingChatMessageContentsAsync()` and process the results in a streaming fashion:
+1. Replace the call to `RunAsync()` with `RunStreamingAsync()` and process the results in a streaming fashion:
 
     ```csharp
     // streaming call
-    var responseStream = chatCompletionService!.GetStreamingChatMessageContentsAsync(chatHistory, executionSettings, kernel);
-    await foreach (var response in responseStream)
+    var responseStream = agent.RunStreamingAsync(prompt!, thread, options);
+    await foreach (var chunk in responseStream)
     {
-        Console.Write(response.Content);
+        Console.Write(chunk.Text);
     }
     ```
 

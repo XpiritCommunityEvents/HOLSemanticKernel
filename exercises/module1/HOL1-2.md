@@ -2,7 +2,7 @@
 
 ## 7. Get Credentials for API Access
 
-**Goal:** Connect C# apps to GitHub Models (for Semantic Kernel, etc).
+**Goal:** Connect C# apps to GitHub Models (for Agent Framework, etc).
 
 ### Steps
 
@@ -32,7 +32,7 @@ var model = "openai/gpt-4o";
 - Start your VS Code space
 - in your codespace go to your files
 - open the `src` folder
-- in the Terminal window, go to the folder `main/src/HolSemanticKernel`
+- in the Terminal window, go to the folder `main/src/HolAgentFramework`
 - type `dotnet run`
 
 # Step 3
@@ -42,7 +42,7 @@ Goal: It is important to keep the API token to your model safe. Otherwise people
 - In the terminal window type
 
 ```pwsh
-dotnet user-secrets set "ApiKey" "<key>" -p .\HolSemanticKernel.csproj
+dotnet user-secrets set "ApiKey" "<key>" -p .\HolAgentFramework.csproj
 ```
 
 In order to read the secret value, we need a Nuget package:
