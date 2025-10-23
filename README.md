@@ -1,4 +1,4 @@
-# **Workshop Outline: Building with LLMs, AF, Agents, and RAG**
+# **Workshop Outline: Building with LLMs, SK, Agents, and RAG**
 
 ---
 
@@ -9,7 +9,7 @@
 - [Lab 1.1](./exercises/module1/HOL1-1.md)
 - [Lab 1.2](./exercises/module1/HOL1-2.md)
 
-### Module 2 - Agent Framework Basics
+### Module 2 - Semantic Kernel Basics
 
 - [Lab 2.1](./exercises/module2/HOL2-1.md)
 
@@ -40,11 +40,11 @@
 
 ---
 
-## **Module II – Agent Framework  Basics** (120 min)
+## **Module II – Semantic Kernel (SK) Basics** (120 min)
 
 ### Theory
 
-* Intro to AF
+* Intro to SK
 * Functions, plugins, variables
 * Memory (OpenAI + anti-patterns)
 * Zero-shot, one-shot, chain-of-thought prompting
@@ -66,7 +66,7 @@
 ### Theory (30 min)
 
 * What is an agent?
-* Agents in AF
+* Agents in SK
 * Orchestration strategies
 
   * Static

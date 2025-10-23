@@ -1,11 +1,9 @@
-﻿using System.ClientModel;
-using System.Text;
-using HolAgentFramework;
-using Microsoft.Agents.AI;
-using Microsoft.Extensions.AI;
+﻿using HOLSemanticKernel;
+using Microsoft.SemanticKernel;
 using Microsoft.Extensions.Configuration;
-using OpenAI;
-using OpenAI.Chat;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 
 // Make sure to add ApiKey to your dotnet user secrets...
 // dotnet user-secrets set "ApiKey"="<your API key>" -p .\module2.csproj
@@ -21,62 +19,61 @@ var token = config["ApiKey"] ?? throw new InvalidOperationException("Missing API
 var model = "openai/gpt-4o";
 var endpoint = "https://models.github.ai/inference";
 
-var chatClient = new ChatClient(model, new ApiKeyCredential(token), new OpenAIClientOptions()
-{
-    Endpoint = new Uri(endpoint)
-});
+var kernelBuilder = Kernel
+    .CreateBuilder()
+    .AddAzureAIInferenceChatCompletion(model, token, new Uri(endpoint));
 
-var options = new ChatClientAgentRunOptions
+kernelBuilder.Plugins.AddFromType<DiscountPlugin>();
+kernelBuilder.Services.AddTransient<IFunctionInvocationFilter, AnonymousUserFilter>();
+
+var kernel = kernelBuilder.Build();
+
+var executionSettings = new AzureOpenAIPromptExecutionSettings
 {
-    ChatOptions = new()
-    {
-        MaxOutputTokens = 500,
-        Temperature = 0.5f,
-        TopP = 1.0f,
-        FrequencyPenalty = 0.0f,
-        PresencePenalty = 0.0f,
-    }
+    MaxTokens = 500,
+    Temperature = 0.5,
+    TopP = 1.0,
+    FrequencyPenalty = 0.0,
+    PresencePenalty = 0.0,
+    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
 };
 
-Console.OutputEncoding = Encoding.UTF8; // the LLM may respond with emojis, so we need UTF8 support
 Console.WriteLine("Hi! I am your AI assistant. Talk to me:");
 
-var instructions =
-    "You are a digital assistant for GloboTicket, a concert ticketing company. You help customers with their ticket purchasing. Tone: warm and friendly, but to the point. Do not make things up when you don't know the answer. Just tell the user that you don't know the answer based on your knowledge.";
+var chatHistory = new ChatHistory();
+chatHistory.AddSystemMessage("You are a digital assistant for GloboTicket, a concert ticketing company. You help customers with their ticket purchasing. Tone: warm and friendly, but to the point. Do not make things up when you don't know the answer. Just tell the user that you don't know the answer based on your knowledge.");
 
-var musicSnob =
-    chatClient.CreateAIAgent(
-        instructions:
-        "You are a music snob. You only like the best bands. When asked, you will only recommend the best bands that are similar to what the user likes.",
-        name: "MusicRecommender",
-        description: "Recommends music bands based on user preferences.");
-
-var agent = chatClient.CreateAIAgent(instructions,
-        name: "GloboTicket Assistant",
-        tools: [
-            AIFunctionFactory.Create(DiscountTool.GetDiscountCode),
-            musicSnob.AsAIFunction()
-        ])
-    .AsBuilder()
-    .Use(DiscountPolicyMiddleware.DisallowAnonymousUsers)
-    .Build();
-
-var thread = agent.GetNewThread();
+var chatCompletionService = kernel.Services.GetService<IChatCompletionService>();
 
 while (true)
 {
     Console.WriteLine();
 
     var prompt = Console.ReadLine();
-    
+
+    // direct plugin call
+    // if (prompt!.Contains("discount"))
+    // {
+    //     var arguments = new KernelArguments { ["userName"] = "guest" };
+    //     var discount = await kernel.InvokeAsync<string>(
+    //         nameof(DiscountPlugin),
+    //         "get_discount_code",
+    //         arguments);
+    //     
+    //     Console.WriteLine(discount);
+    //     continue;
+    // }
+
+    chatHistory.AddUserMessage(prompt!);
+
     // synchronous call
-    // var response = await agent.RunAsync(prompt!, thread, options);
-    // Console.WriteLine(response.Text);
-    
+    //var response = await chatCompletionService!.GetChatMessageContentsAsync(chatHistory, executionSettings, kernel);
+    // Console.WriteLine(response.Last().Content);
+
     // streaming call
-    var responseStream = agent.RunStreamingAsync(prompt!, thread, options);
-    await foreach (var chunk in responseStream)
+    var responseStream = chatCompletionService!.GetStreamingChatMessageContentsAsync(chatHistory, executionSettings, kernel);
+    await foreach (var response in responseStream)
     {
-        Console.Write(chunk.Text);
+        Console.Write(response.Content);
     }
 }
