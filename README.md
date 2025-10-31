@@ -15,7 +15,7 @@
 
 ---
 
-## **Module I – LLM Introduction** (60 min)
+## **Module I – LLM Introduction** (60 min) (Rene/Marcel)
 
 ### Theory (30 min)
 
@@ -40,7 +40,7 @@
 
 ---
 
-## **Module II – Semantic Kernel (SK) Basics** (120 min)
+## **Module II – Semantic Kernel (SK) Basics** (120 min) (Roy)
 
 ### Theory
 
@@ -61,7 +61,7 @@
 
 ---
 
-## **Module III – Agents** (120 min)
+## **Module III – Agents** (120 min) (Marcel)
 
 ### Theory (30 min)
 
@@ -89,7 +89,7 @@
 
 ---
 
-## **Module IV – Retrieval-Augmented Generation (RAG)** (60 min)
+## **Module IV – Retrieval-Augmented Generation (RAG)** (60 min) (Marcel/Rene)
 
 ### Theory (30 min)
 
