@@ -1,90 +1,131 @@
-# Lab 1.2
+# Lab 1.2 - Connect Semantic Kernel to GitHub Models
 
-## 7. Get Credentials for API Access
+In this lab, you will connect your C# application to GitHub Models through the Azure AI Inference API. You will generate and securely store an API key, configure your application, and run your first query against a model.
 
-**Goal:** Connect C# apps to GitHub Models (for Semantic Kernel, etc).
+---
+
+## Get Credentials for API Access
+
+**Goal:** Obtain API credentials and configuration details to connect your application to GitHub Models.
 
 ### Steps
 
-1. On the [GitHub Models Marketplace](https://github.com/marketplace?type=models), click **GPT 5 Mini**  
-[Direct link](https://github.com/marketplace/models/azure-openai/gpt-4o)
-2. Click **Use this model**.
-3. Under **Configure Authentication**, click **Create Personal Access Token**.
-4. On the next screen, select **Public Repositories**.
-5. Ensure **Models: Read Only** is checked.
-6. Generate your token.  
-**Copy and store it securely.**
-7. Also record:
+1. Go to the [GitHub Models Marketplace](https://github.com/marketplace?type=models).
+2. Locate and click **GPT 5 Mini**.
+   [Direct link to model](https://github.com/marketplace/models/azure-openai/gpt-4o)
+3. Click **Use this model**.
+4. Under **Configure Authentication**, select **Create Personal Access Token**.
+5. On the next screen, select **Public Repositories**.
+6. Ensure that **Models: Read Only** is checked.
+7. Generate your token and copy it securely.
+8. Record the following information for later use:
 
-    - Token
-    - Endpoint: `https://models.github.ai/inference`
-    - Model: `openai/gpt-4o`
+   * Token
+   * Endpoint: `https://models.github.ai/inference`
+   * Model: `openai/gpt-4o`
 
-```csharp
-// For C# SDK
-var token = "<your stored token>";
-var endpoint = "https://models.github.ai/inference";
-var model = "openai/gpt-4o";
-````
+   ```csharp
+   // For C# SDK
+   var token = "<your stored token>";
+   var endpoint = "https://models.github.ai/inference";
+   var model = "openai/gpt-4o";
+   ```
 
-# Step 2
+---
 
-- Start your VS Code space
-- in your codespace go to your files
-- open the `src` folder
-- in the Terminal window, go to the folder `main/src/HolSemanticKernel`
-- type `dotnet run`
+## Configure and Run the Application
 
-# Step 3
+**Goal:** Start the application and prepare the environment for connecting to the model.
 
-Goal: It is important to keep the API token to your model safe. Otherwise people can use your LLM at your cost. Therefore we will move the API key to .NET user secrets. Never commit a secret key to your version control system!
+### Steps
 
-- In the terminal window type
+1. Open your VS Code Codespace.
+2. Navigate to your project files.
+3. Open the `src` folder.
+4. In the terminal, go to `main/src/HolSemanticKernel`.
+5. Run the application:
 
-```pwsh
-dotnet user-secrets set "ApiKey" "<key>" -p .\HolSemanticKernel.csproj
-```
+   ```pwsh
+   dotnet run
+   ```
 
-In order to read the secret value, we need a Nuget package:
+---
 
-```pwsh
-dotnet add package Microsoft.Extensions.Configuration.UserSecrets
-```
+## Secure Your API Key with .NET User Secrets
 
-Then, at the top of your `Program.cs`, read the token from your configuration using `ConfigurationBuilder`:
+**Goal:** Protect your API key using .NET’s User Secrets feature to prevent accidental exposure in source control.
 
-```csharp
-var config = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddUserSecrets<Program>()
-    .Build();
+### Steps
 
-var token = config["ApiKey"];
-```
+1. In the terminal, run the following command to store your API key securely:
 
-# Step 4 Use your Model
+   ```pwsh
+   dotnet user-secrets set "ApiKey" "<key>" -p .\HolSemanticKernel.csproj
+   ```
 
-Now that you have added the api token, it is time to fire your first LLM query
+2. Install the required NuGet package:
 
-- First add the neccessary packages to your program
+   ```pwsh
+   dotnet add package Microsoft.Extensions.Configuration.UserSecrets
+   ```
 
-```pwsh
-dotnet add package Azure.AI.Inference --prerelease  
-dotnet add package Azure.Identity --prerelease  
-```
+3. In your `Program.cs`, load the secret value using the `ConfigurationBuilder`:
 
-```csharp
-var client = new ChatCompletionsClient(new Uri(endpoint), new AzureKeyCredential(token), new AzureAIInferenceClientOptions());
-var requestOptions = new ChatCompletionsOptions()
-{
-    Model = model,
-    Messages = [
-        new ChatRequestUserMessage("Tell me a joke about computers")
-    ]
-};
-var resp = await client.CompleteAsync(requestOptions);
+   ```csharp
+   var config = new ConfigurationBuilder()
+       .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+       .AddUserSecrets<Program>()
+       .Build();
 
-Console.WriteLine(resp.Value.Content);
-```
+   var token = config["ApiKey"];
+   ```
 
-Run the application and see what joke the LLM came up with.
+> Note: Never commit your API key to version control. Treat it as confidential information to prevent unauthorized usage.
+
+---
+
+## Use Your Model
+
+**Goal:** Run your first query against the GitHub Model API.
+
+### Steps
+
+1. Add the required NuGet packages to your project:
+
+   ```pwsh
+   dotnet add package Azure.AI.Inference --prerelease
+   dotnet add package Azure.Identity --prerelease
+   ```
+
+2. Replace the code in your main program with the following example to send a prompt to the model:
+
+   ```csharp
+   var client = new ChatCompletionsClient(
+       new Uri(endpoint),
+       new AzureKeyCredential(token),
+       new AzureAIInferenceClientOptions());
+
+   var requestOptions = new ChatCompletionsOptions()
+   {
+       Model = model,
+       Messages =
+       [
+           new ChatRequestUserMessage("Tell me a joke about computers")
+       ]
+   };
+
+   var resp = await client.CompleteAsync(requestOptions);
+   Console.WriteLine(resp.Value.Content);
+   ```
+
+3. Run the application:
+
+   ```pwsh
+   dotnet run
+   ```
+
+4. Verify that the model responds with a joke.
+
+---
+
+This concludes Lab 1.2.

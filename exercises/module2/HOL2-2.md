@@ -1,4 +1,4 @@
-# Lab 2.1
+# Lab 2.2 - Plugins & Function Calling
 
 In this lab, we will implement a simple plugin that generates a random discount code when the user asks for it. First, we are going to invoke it manually, and then we will let the LLM automatically invoke it.
 

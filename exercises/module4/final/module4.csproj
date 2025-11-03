@@ -1,0 +1,122 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>9606a66f-95d7-4ecc-9510-58b2f2a3d69c</UserSecretsId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;SKEXP0010;SKEXP0050;SKEXP0001</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;SKEXP0010;SKEXP0050;SKEXP0001</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Content\Accor_Arena.md" />
+    <None Remove="Content\AFAS_Live.md" />
+    <None Remove="Content\Crypto.com_Arena.md" />
+    <None Remove="Content\Estadio_River_Plate.md" />
+    <None Remove="Content\Foro_Sol.md" />
+    <None Remove="Content\Friends_Arena.md" />
+    <None Remove="Content\Jeunesse_Arena.md" />
+    <None Remove="Content\Madison_Square_Garden.md" />
+    <None Remove="Content\Mercedes-Benz_Arena.md" />
+    <None Remove="Content\Movistar_Arena.md" />
+    <None Remove="Content\PalaLottomatica.md" />
+    <None Remove="Content\Palau_Sant_Jordi.md" />
+    <None Remove="Content\Qudos_Bank_Arena.md" />
+    <None Remove="Content\Red_Rocks_Amphitheatre.md" />
+    <None Remove="Content\Rod_Laver_Arena.md" />
+    <None Remove="Content\Scotiabank_Arena.md" />
+    <None Remove="Content\The_O2_Arena.md" />
+    <None Remove="Content\Tokyo_Dome.md" />
+    <None Remove="Content\Torwar_Hall.md" />
+    <None Remove="Content\Ziggo_Dome.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Content\Accor_Arena.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\AFAS_Live.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Crypto.com_Arena.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Estadio_River_Plate.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Foro_Sol.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Friends_Arena.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Jeunesse_Arena.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Madison_Square_Garden.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Mercedes-Benz_Arena.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Movistar_Arena.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\PalaLottomatica.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Palau_Sant_Jordi.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Qudos_Bank_Arena.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Red_Rocks_Amphitheatre.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Rod_Laver_Arena.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Scotiabank_Arena.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\The_O2_Arena.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Tokyo_Dome.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Torwar_Hall.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Ziggo_Dome.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureAIInference" Version="1.65.0-beta" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.65.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.Qdrant" Version="1.66.0-preview" />
+    <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.63.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.63.0" />
+  </ItemGroup>
+    
+</Project>

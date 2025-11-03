@@ -1,4 +1,4 @@
-# Lab 2.1
+# Lab 2.1 - Turning Prompts into Conversations
 
 In this lab, we will introduce Semantic Kernel into your application to make communication with your LLMs more flexible and powerful.
 
