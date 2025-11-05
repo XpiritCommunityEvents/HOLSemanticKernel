@@ -248,3 +248,32 @@ The `CreateFunctionFromPromptYaml` extension method comes from the package we ju
 
 - Run the application again and tell the assistant your favorite artist or music style. Ask for recommendations. The `music_recommender` should be invoked and return a bulleted list of 10 suggestions.
 
+## Multi modal chats
+
+Finally, we are going to look at multi modal chats. Besides plain text, our LLMs can also work with other types of data, such as pictures or audio. Let's test this out with an image.
+
+- There is already an image named `guitar.jpg` in the [/src/HolSemanticKernel](../../src/HolSemanticKernel/) folder which is included in the starter project. As the name suggests, it is an electric guitar, a Music Man Luke 4. We're going to ask the LLM to identify the instrument using a multi-modal chat.
+
+- Add the following code just before the `while (true)` chat loop:
+
+  ```csharp
+  var multiModalChat = new ChatHistory("Your job is to identify musical instruments from images.");
+  multiModalChat.AddUserMessage(
+  [
+    new Microsoft.SemanticKernel.TextContent("Can you identify this instrument?"),
+    new Microsoft.SemanticKernel.ImageContent(File.ReadAllBytes("guitar.jpg"), "image/jpg")
+  ]);
+
+  var multiModalResponse = await chatCompletionService!.GetChatMessageContentsAsync(multiModalChat, executionSettings, kernel);
+  Console.WriteLine(multiModalResponse.Last().Content);
+  ```
+
+This sample code constructs a new `ChatHistory` with a system instruction telling the LLM to identify instruments on pictures.
+
+We're adding a user message to the `ChatHistory` that consists of 2 content parts: a `TextContent` containing a prompt, and `ImageContent` containing the raw bytes of the image file. We also specify the mimetype so that the LLM can make sense of it.
+
+- Run the application. You should receive an answer from the LLM indicating that this is an electric guitar.
+
+- If time permits, try out some other images. It is also possible to give the LLM PDF files to read for example, using `BinaryContent`.
+
+This concludes lab 2.2.

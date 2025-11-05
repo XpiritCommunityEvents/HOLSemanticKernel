@@ -55,6 +55,16 @@ chatHistory.AddSystemMessage("You are a digital assistant for GloboTicket, a con
 
 var chatCompletionService = kernel.Services.GetService<IChatCompletionService>();
 
+var multiModalChat = new ChatHistory("Your job is to identify musical instruments from images.");
+multiModalChat.AddUserMessage(
+[
+    new Microsoft.SemanticKernel.TextContent("Can you identify this instrument?"),
+    new Microsoft.SemanticKernel.ImageContent(File.ReadAllBytes("guitar.jpg"), "image/jpg")
+]);
+
+var multiModalResponse = await chatCompletionService!.GetChatMessageContentsAsync(multiModalChat, executionSettings, kernel);
+Console.WriteLine(multiModalResponse.Last().Content);
+
 while (true)
 {
     Console.WriteLine();
