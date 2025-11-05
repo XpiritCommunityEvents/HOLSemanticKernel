@@ -13,6 +13,14 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.9"/>
         <PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureAIInference" Version="1.67.0-beta" />
         <PackageReference Include="Microsoft.SemanticKernel" Version="1.67.0"/>
+        <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.67.0"/>
+        <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.67.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="music_recommender.yaml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 </Project>

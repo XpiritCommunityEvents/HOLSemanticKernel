@@ -176,4 +176,75 @@ We can use a _Function Invocation Filter_ to intercept the function call and ins
 
 Besides a code based function, you can also implement a prompt based function. These are functions that are also executed by an LLM based on a specific prompt. Let's implement one of those too.
 
-.....
+To show what is possible, we're going to create a YAML based prompt.
+
+- Add a file to your project named `music_recommender.yaml`
+- Paste the following content into the file
+
+  ```yaml
+  name: music_recommender
+  description: You are a music snob. You only like the best bands. When asked, you will only recommend the best bands that are similar to what the user likes.
+  template: |
+    Provide a list of 10 artists or bands that are similar to the user's music preference: {{ musicPreference }}.
+    Output your recommendations as a list of bullet points.
+  
+    Recommendations:
+  template_format: handlebars
+  input_variables:
+    - name: musicPreference
+      description: The music preference of the user.
+      is_required: true
+  execution_settings:
+    default:
+      top_p: 0.98
+      temperature: 0.7
+      presence_penalty: 0.0
+      frequency_penalty: 0.0
+      max_tokens: 1200
+  ```
+- Examine this file. This YAML format lets you define a reusable prompt which is templated using the [Handlebars](https://handlebarsjs.com/) syntax. You can reference input variables in the template in your prompt template, like we did with `{{ musicPreference }}`. As you can see, we also set some execution settings specific for this prompt. All this makes it an encapsulated and reusable AI based function.
+
+- Make sure the file is included in your application's output as content. Add the following section to the `.csproj` file:
+
+  ```xml
+  <ItemGroup>
+    <Content Include="music_recommender.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  ```
+
+- Now we need 2 additional packages in order to read and use this prompt.
+
+  ```pwsh
+  dotnet add package Microsoft.SemanticKernel.PromptTemplates.Handlebars
+  dotnet add package Microsoft.SemanticKernel.Yaml
+  ```
+
+- Add the following `using` statement to the top of your `Program.cs`:
+
+  ```csharp
+  using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
+  ```
+
+- Now add the prompt based function to the kernel with the following lines, just below the `var kernel = KernelBuilder.Build();`:
+
+  ```csharp
+  var kernel = kernelBuilder.Build();
+
+  var promptTemplate = File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "music_recommender.yaml"));
+  
+  var musicRecommender = kernel.CreateFunctionFromPromptYaml(
+    promptTemplate,
+    new HandlebarsPromptTemplateFactory()
+    {
+        AllowDangerouslySetContent = true
+    });
+  
+  kernel.Plugins.AddFromFunctions("music_recommender", [musicRecommender]);
+  ```
+
+The `CreateFunctionFromPromptYaml` extension method comes from the package we just added. Note that we're specifying the `HandlebarsPromptTemplateFactory` to indicate that the prompt has a Handlebars based syntax. `AllowDangerouslySetContent = true` is not recommended for production scenarios but it lets our GloboTicket assistant pass the user's music preference without having to do a value conversion to a simple `string`.
+
+- Run the application again and tell the assistant your favorite artist or music style. Ask for recommendations. The `music_recommender` should be invoked and return a bulleted list of 10 suggestions.
+

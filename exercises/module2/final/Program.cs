@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
+using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
 
 // Make sure to add ApiKey to your dotnet user secrets...
 // dotnet user-secrets set "ApiKey"="<your API key>" -p .\module2.csproj
@@ -27,6 +28,15 @@ kernelBuilder.Plugins.AddFromType<DiscountPlugin>();
 kernelBuilder.Services.AddTransient<IFunctionInvocationFilter, AnonymousUserFilter>();
 
 var kernel = kernelBuilder.Build();
+
+var promptTemplate = File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "music_recommender.yaml"));
+var musicRecommender = kernel.CreateFunctionFromPromptYaml(
+    promptTemplate,
+    new HandlebarsPromptTemplateFactory()
+    {
+        AllowDangerouslySetContent = true
+    });
+kernel.Plugins.AddFromFunctions("music_recommender", [musicRecommender]);
 
 var executionSettings = new AzureOpenAIPromptExecutionSettings
 {
