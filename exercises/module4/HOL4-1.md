@@ -173,7 +173,8 @@ private async Task<string> GetFileContentsFromRepo(Kernel kernel, string venueNa
     var result = await chatCompletionService.GetChatMessageContentAsync(chatHistory, executionSettings, kernel);
     
     var fileResult = JsonSerializer.Deserialize<SelectedFile>(result.ToString());
-    var fullfilename = directory + "\\" + fileResult.file;
+    var fullfilename = Path.Combine(directory, fileResult.file);
+
     if (System.IO.File.Exists(fullfilename))
     {
         using (var file = File.OpenText(fullfilename))

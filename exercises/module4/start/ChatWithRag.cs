@@ -20,7 +20,7 @@ namespace modulerag
 
             var question =
             """
-            I booked tickets for a concert tonight in venue AFAS Live!.
+            I booked tickets for a concert tonight in venue AFAS Live.
             I have this small black backpack, not big like for school, more like the mini
             festival type 😅. it just fits my wallet, a hoodie and a bottle of water.
             Is this allowed? 
@@ -102,7 +102,7 @@ namespace modulerag
             var result = await chatCompletionService.GetChatMessageContentAsync(chatHistory, executionSettings, kernel);
 
             var fileResult = JsonSerializer.Deserialize<SelectedFile>(result.ToString());
-            var fullfilename = directory + "\\" + fileResult.file;
+            var fullfilename = Path.Combine(directory, fileResult.file);
             if (System.IO.File.Exists(fullfilename))
             {
                 using (var file = File.OpenText(fullfilename))
