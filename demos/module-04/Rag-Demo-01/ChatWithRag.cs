@@ -32,9 +32,8 @@ namespace demo_01
 
             //KernelFunction getPolicyFunction = kernel.Plugins.GetFunction("policy", "GetVenuePolicy");
             IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
-            kernelBuilder.Services.AddLogging(
-                                 s => s.AddConsole().SetMinimumLevel(LogLevel.Trace));
-            kernelBuilder.Services.AddSingleton<IConfiguration>(config);
+            //kernelBuilder.Services.AddLogging(
+            //                     s => s.AddConsole().SetMinimumLevel(LogLevel.Trace));
 
 
 
