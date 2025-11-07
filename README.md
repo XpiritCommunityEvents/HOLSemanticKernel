@@ -107,6 +107,3 @@
 
 Approx. **6 hours** (including short breaks)
 
----
-
-👉 Do you want me to also make this into a **slide-ready agenda** (per module, with learning objectives + outcomes) so you can directly use it in a workshop deck?
