@@ -1,27 +1,20 @@
-﻿using Microsoft.KernelMemory;
-using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
+﻿using System.ClientModel;
+using System.Text.Json;
+using Microsoft.Extensions.Configuration;
+using Microsoft.KernelMemory;
 using Microsoft.KernelMemory.DocumentStorage.DevTools;
 using Microsoft.KernelMemory.FileSystem.DevTools;
 using Microsoft.KernelMemory.MemoryStorage.DevTools;
-using OpenAI;
-using System.ClientModel;
-using System;
+using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.ML.OnnxRuntimeGenAI;
-using Microsoft.Extensions.Logging;
-using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Wordprocessing;
-using System.Text.Json;
-using System.IO;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
+using OpenAI;
 
-namespace demo_01
+namespace modulerag
 {
     internal class ChatWithRag
     {
-        private readonly string repoFolder = "C:\\source\\HOLSemanticKernel\\demos\\module-04\\datasets\\venue-policies";
+        private readonly string repoFolder = Path.Combine("", "datasets", "venue-policies");
 
         public async Task RAG_with_single_prompt(string deploymentName, string endpoint, string apiKey, IConfiguration config)
         {
@@ -65,7 +58,7 @@ namespace demo_01
 
             foreach (var file in GetFileListOfPolicyDocuments(repoFolder))
             {
-                var fullfilename = repoFolder + "\\" + file;
+                var fullfilename = Path.Combine(repoFolder, file);
                 var importResult = await memoryConnector.ImportDocumentAsync(filePath: fullfilename, documentId: file);
                 Console.WriteLine($"Imported file {file} with result: {importResult}");
             }
@@ -171,7 +164,7 @@ namespace demo_01
             var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
             var result = await chatCompletionService.GetChatMessageContentAsync(chatHistory, executionSettings, kernel);
             var fileResult = JsonSerializer.Deserialize<SelectedFile>(result.ToString());
-            var fullfilename = repoFolder + "\\" + fileResult.file;
+            var fullfilename = Path.Combine(repoFolder, fileResult.file);
             if (System.IO.File.Exists(fullfilename))
             {
                 using (var file = File.OpenText(fullfilename))

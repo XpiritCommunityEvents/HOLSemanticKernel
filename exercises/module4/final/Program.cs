@@ -1,11 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.SemanticKernel;
-using OpenAI;
-using System.ClientModel;
 
-namespace demo_01
+namespace modulerag
 {
     internal class Program
     {
@@ -18,15 +13,18 @@ namespace demo_01
 
             IConfiguration config = builder.Build();
 
-            string deploymentName = config.GetSection("OpenAI").GetValue<string>("Model") ?? throw new ArgumentException("OpenAI Model not set");
-            string endpoint = config.GetSection("OpenAI").GetValue<string>("EndPoint") ?? throw new ArgumentException("OpenAI EndPoint not set");
-            string apiKey = config.GetSection("OpenAI").GetValue<string>("ApiKey") ?? throw new ArgumentException("OpenAIKey not set");
+            //string deploymentName = config.GetSection("OpenAI").GetValue<string>("Model") ?? throw new ArgumentException("OpenAI Model not set");
+            //string endpoint = config.GetSection("OpenAI").GetValue<string>("EndPoint") ?? throw new ArgumentException("OpenAI EndPoint not set");
+            //string apiKey = config.GetSection("OpenAI").GetValue<string>("ApiKey") ?? throw new ArgumentException("OpenAIKey not set");
             
+            var model = config["OpenAI:Model"];
+            var endpoint = config["OpenAI:EndPoint"];
+            var token = config["OpenAI:ApiKey"];
 
 
-            await new ChatWithRag().IngestDocuments(deploymentName, endpoint, apiKey, config);
-            await new ChatWithRag().RaG_With_Memory(deploymentName, endpoint, apiKey, config);
-            await new ChatWithRag().AskVenueQuestion(deploymentName, endpoint, apiKey, config);
+            await new ChatWithRag().IngestDocuments(model, endpoint, token, config);
+            await new ChatWithRag().RaG_With_Memory(model, endpoint, token, config);
+            await new ChatWithRag().AskVenueQuestion(model, endpoint, token, config);
 
         }
     }
