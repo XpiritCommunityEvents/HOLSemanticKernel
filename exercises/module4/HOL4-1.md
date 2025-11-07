@@ -202,3 +202,5 @@ Notice here that we added policyContext as a parameter to the `GetResponseOnQues
 Now you are ready to run the application. Run the console application and see the response from the model. You should see that the model is able to answer the question based on the venue policy.
 
 Try also with other questions and other venue policies. See how the model is able to answer questions based on the injected knowledge.
+
+This concludes lab 4.1. You have learned how to build a simple RAG system using a single prompt and how to use an LLM to pick the right knowledge based on the user question.
