@@ -47,7 +47,7 @@ jobs:
         GH_TOKEN: ${{ secrets.VSLIVE_REPOCREATE }}
       run: |
         # Create clone of this repo for user
-        repo_name="XpiritCommunityEvents/attendeec2c-${{ steps.github_handle.outputs.result }}"
+        repo_name="XpiritCommunityEvents/attendee-workshopSK-${{ steps.github_handle.outputs.result }}"
         if gh repo view $repo_name &>/dev/null; then
             echo "Repository $repo_name already exists."
         else
