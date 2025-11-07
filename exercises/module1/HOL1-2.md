@@ -24,6 +24,8 @@ In this lab, you will connect your C# application to GitHub Models through the A
    * Endpoint: `https://models.github.ai/inference`
    * Model: `openai/gpt-4o`
 
+   This is already configured in the appsettings.json file
+
    ```csharp
    // For C# SDK
    var token = "<your stored token>";
@@ -60,7 +62,7 @@ In this lab, you will connect your C# application to GitHub Models through the A
 1. In the terminal, run the following command to store your API key securely:
 
    ```pwsh
-   dotnet user-secrets set "ApiKey" "<key>" -p .\HolSemanticKernel.csproj
+   dotnet user-secrets set "OpenAI:ApiKey" "<key>" -p .\HolSemanticKernel.csproj
    ```
 
 2. Install the required NuGet package:
@@ -77,7 +79,9 @@ In this lab, you will connect your C# application to GitHub Models through the A
        .AddUserSecrets<Program>()
        .Build();
 
-   var token = config["ApiKey"];
+   var model = config["OpenAI:Model"];
+   var endpoint = config["OpenAI:EndPoint"];
+   var token = config["OpenAI:ApiKey"];
    ```
 
 > Note: Never commit your API key to version control. Treat it as confidential information to prevent unauthorized usage.
