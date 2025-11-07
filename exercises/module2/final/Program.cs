@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
+using ModelContextProtocol.Client;
 
 // Make sure to add ApiKey to your dotnet user secrets...
 // dotnet user-secrets set "ApiKey"="<your API key>" -p .\module2.csproj
@@ -23,6 +24,23 @@ var endpoint = "https://models.github.ai/inference";
 var kernelBuilder = Kernel
     .CreateBuilder()
     .AddAzureAIInferenceChatCompletion(model, token, new Uri(endpoint));
+
+var mcpClient = await McpClient.CreateAsync(new HttpClientTransport(
+    new HttpClientTransportOptions
+    {
+        Name = "GitHub",
+        Endpoint = new Uri("https://api.githubcopilot.com/mcp/"),
+        AdditionalHeaders = new Dictionary<string, string>
+        {
+            ["Authorization"] = $"Bearer {config["GitHubToken"]}"
+        }
+    }));
+
+var tools = await mcpClient.ListToolsAsync();
+
+kernelBuilder.Plugins.AddFromFunctions(
+    pluginName: "GitHub",
+    functions: tools.Select(x => x.AsKernelFunction()));
 
 kernelBuilder.Plugins.AddFromType<DiscountPlugin>();
 kernelBuilder.Services.AddTransient<IFunctionInvocationFilter, AnonymousUserFilter>();
@@ -55,15 +73,15 @@ chatHistory.AddSystemMessage("You are a digital assistant for GloboTicket, a con
 
 var chatCompletionService = kernel.Services.GetService<IChatCompletionService>();
 
-var multiModalChat = new ChatHistory("Your job is to identify musical instruments from images.");
-multiModalChat.AddUserMessage(
-[
-    new Microsoft.SemanticKernel.TextContent("Can you identify this instrument?"),
-    new Microsoft.SemanticKernel.ImageContent(File.ReadAllBytes("guitar.jpg"), "image/jpg")
-]);
+// var multiModalChat = new ChatHistory("Your job is to identify musical instruments from images.");
+// multiModalChat.AddUserMessage(
+// [
+//     new Microsoft.SemanticKernel.TextContent("Can you identify this instrument?"),
+//     new Microsoft.SemanticKernel.ImageContent(File.ReadAllBytes("guitar.jpg"), "image/jpg")
+// ]);
 
-var multiModalResponse = await chatCompletionService!.GetChatMessageContentsAsync(multiModalChat, executionSettings, kernel);
-Console.WriteLine(multiModalResponse.Last().Content);
+// var multiModalResponse = await chatCompletionService!.GetChatMessageContentsAsync(multiModalChat, executionSettings, kernel);
+// Console.WriteLine(multiModalResponse.Last().Content);
 
 while (true)
 {
@@ -87,13 +105,13 @@ while (true)
     chatHistory.AddUserMessage(prompt!);
 
     // synchronous call
-    //var response = await chatCompletionService!.GetChatMessageContentsAsync(chatHistory, executionSettings, kernel);
-    // Console.WriteLine(response.Last().Content);
+    var response = await chatCompletionService!.GetChatMessageContentsAsync(chatHistory, executionSettings, kernel);
+    Console.WriteLine(response.Last().Content);
 
     // streaming call
-    var responseStream = chatCompletionService!.GetStreamingChatMessageContentsAsync(chatHistory, executionSettings, kernel);
-    await foreach (var response in responseStream)
-    {
-        Console.Write(response.Content);
-    }
+    // var responseStream = chatCompletionService!.GetStreamingChatMessageContentsAsync(chatHistory, executionSettings, kernel);
+    // await foreach (var response in responseStream)
+    // {
+    //     Console.Write(response.Content);
+    // }
 }

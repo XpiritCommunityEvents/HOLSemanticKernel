@@ -21,9 +21,9 @@ jobs:
 
     - name: Get issue creator
       id: github_handle
-      uses: actions/github-script@v6
+      uses: actions/github-script@v8
+      
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           if ("${{ github.event_name }}" == "issues") {
             const subject = context.payload.issue;
@@ -47,7 +47,7 @@ jobs:
         GH_TOKEN: ${{ secrets.VSLIVE_REPOCREATE }}
       run: |
         # Create clone of this repo for user
-        repo_name="XpiritCommunityEvents/attendeec2c-${{ steps.github_handle.outputs.result }}"
+        repo_name="XpiritCommunityEvents/attendee-workshopSK-${{ steps.github_handle.outputs.result }}"
         if gh repo view $repo_name &>/dev/null; then
             echo "Repository $repo_name already exists."
         else
@@ -69,5 +69,5 @@ jobs:
         GH_TOKEN: ${{ secrets.VSLIVE_REPOCREATE }}
       run: |
         # Add user to newly cloned repo
-        gh repo-collab add XpiritCommunityEvents/attendeec2c-${{ steps.github_handle.outputs.result }} ${{ steps.github_handle.outputs.result }} --permission admin | cat
+        gh repo-collab add XpiritCommunityEvents/attendee-workshopSK-${{ steps.github_handle.outputs.result }} ${{ steps.github_handle.outputs.result }} --permission admin | cat
     
