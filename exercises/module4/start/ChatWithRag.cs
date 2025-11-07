@@ -37,8 +37,22 @@ namespace modulerag
             var policyContext = await GetFileContentsFromRepo(kernel, venue);
             var response = await GetResponseOnQuestion(kernel, question, policyContext);
 
-                Console.WriteLine("******** RESPONSE ***********");
+            Console.WriteLine("******** RESPONSE ***********");
             Console.WriteLine(response);
+        }
+
+        public async Task IngestDocuments(string deploymentName, string endpoint, string apiKey, IConfiguration config)
+        {
+            var directory = "/workspaces/HOLSemanticKernel/exercises/module4/datasets/venue-policies";
+            var memoryConnector = GetLocalKernelMemory(deploymentName, endpoint, apiKey);
+
+            foreach (var file in GetFileListOfPolicyDocuments(directory))
+            {
+                var fullfilename = Path.Combine(directory, file);
+                var importResult = await memoryConnector.ImportDocumentAsync(filePath: fullfilename, documentId: file);
+                Console.WriteLine($"Imported file {file} with result: {importResult}");
+            }
+
         }
 
         private async Task<string> GetResponseOnQuestion(Kernel kernel, string question, string policyContext)
@@ -116,7 +130,66 @@ namespace modulerag
         }
 
 
+        private IEnumerable<string> GetFileListOfPolicyDocuments(string directory)
+        {
+            return System.IO.Directory.GetFiles(directory, "*.pdf").Select(f => System.IO.Path.GetFileName(f));
+        }
+
+        private IKernelMemory GetLocalKernelMemory(string deploymentName, string endpoint, string apiKey)
+        {
+            // 1. Extract and prepare API credentials
+            var openAIApiKey = new ApiKeyCredential(apiKey);
+            string key = "";
+            openAIApiKey.Deconstruct(out key);
+
+            // 2. Configure text generation service
+            var openAIConfig = new OpenAIConfig
+            {
+                Endpoint = endpoint,
+                APIKey = key,
+                TextModel = deploymentName,
+            };
+
+            // 3. Initialize OpenAI client
+            var client = new OpenAIClient(new ApiKeyCredential(apiKey), new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
+
+            // 4. Set up embedding generation configuration
+            var openAiEmbedingsConfig = new OpenAIConfig
+            {
+                APIKey = key,
+                Endpoint = endpoint,
+                EmbeddingModel = "openai/text-embedding-3-small",
+            };
+
+            // 5-8. Build comprehensive KernelMemory system
+            var kernelMemoryBuilder = new KernelMemoryBuilder()
+                // 5. Configure file storage backend
+                .WithSimpleFileStorage(new SimpleFileStorageConfig
+                {
+                    Directory = "kernel-memory/km-file-storage",
+                    StorageType = FileSystemTypes.Disk
+                })
+                // 6. Configure text database backend
+                .WithSimpleTextDb(new SimpleTextDbConfig
+                {
+                    Directory = "kernel-memory/km-text-db",
+                    StorageType = FileSystemTypes.Disk
+                })
+                // 7. Configure vector database backend
+                .WithSimpleVectorDb(new SimpleVectorDbConfig
+                {
+                    Directory = "kernel-memory/km-vector-db",
+                    StorageType = FileSystemTypes.Disk
+                })
+                // 8. Integrate AI services
+                .WithOpenAITextEmbeddingGeneration(openAiEmbedingsConfig)
+                .WithOpenAITextGeneration(openAIConfig);
+
+            // 9. Build and return the memory instance
+            return kernelMemoryBuilder.Build();
+
+        }
+
+
     }
-
-
 }

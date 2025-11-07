@@ -18,7 +18,9 @@ namespace modulerag
             var token = config["OpenAI:ApiKey"];
 
 
-            await new ChatWithRag().RAG_with_single_prompt(model, endpoint, token, config);
+        //    await new ChatWithRag().RAG_with_single_prompt(model, endpoint, token, config);
+
+            await new ChatWithRag().IngestDocuments(model, endpoint, token, config);
         }
     }
 }
