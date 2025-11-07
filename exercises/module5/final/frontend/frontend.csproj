@@ -11,6 +11,8 @@
     <PackageReference Include="AspNetCore.HealthChecks.ApplicationStatus" Version="9.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.67.1" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureAIInference" Version="1.67.1-beta" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
     <PackageReference Include="prometheus-net.AspNetCore.HealthChecks" Version="8.2.1" />
     <PackageReference Include="Prometheus.Client.AspNetCore" Version="6.0.0" />

@@ -6,6 +6,7 @@ using Prometheus;
 using HealthChecks.UI.Client;
 using GloboTicket.Frontend.HealthChecks;
 using Microsoft.Extensions.Options;
+using GloboTicket.Frontend.Services.AI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,8 @@ builder.Services.AddSingleton<Settings>();
 builder.Services.AddApplicationInsightsTelemetry();
 
 builder.Services.AddSignalR();
+
+builder.Services.AddSemanticKernelServices(builder.Configuration);
 
 var app = builder.Build();
 
