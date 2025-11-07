@@ -69,5 +69,5 @@ jobs:
         GH_TOKEN: ${{ secrets.VSLIVE_REPOCREATE }}
       run: |
         # Add user to newly cloned repo
-        gh repo-collab add attendee-workshopSK-${{ steps.github_handle.outputs.result }} ${{ steps.github_handle.outputs.result }} --permission admin | cat
+        gh repo-collab add XpiritCommunityEvents/attendee-workshopSK-${{ steps.github_handle.outputs.result }} ${{ steps.github_handle.outputs.result }} --permission admin | cat
     
