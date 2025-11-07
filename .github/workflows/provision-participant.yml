@@ -21,9 +21,9 @@ jobs:
 
     - name: Get issue creator
       id: github_handle
-      uses: actions/github-script@v6
+      uses: actions/github-script@v8
+      
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           if ("${{ github.event_name }}" == "issues") {
             const subject = context.payload.issue;
