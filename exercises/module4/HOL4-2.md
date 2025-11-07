@@ -213,3 +213,6 @@ Now run the application. This will ingest all the documents from the specified d
 Check the km-file-storage folder to see the ingested documents. Each document will be chunked into smaller pieces and stored in the km-vector-db folder as vectors.
 
 In the km-vector-db folder you will see files that contain the vector representations of the document chunks. These vectors are what enable semantic search capabilities in the RAG system.
+
+## The End 
+This concludes the ingestion part of the lab. In the next part, we will modify the chat method to perform semantic search using the vector database.

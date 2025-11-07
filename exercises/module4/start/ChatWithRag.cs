@@ -55,6 +55,37 @@ namespace modulerag
 
         }
 
+        public async Task RaG_With_Memory(string deploymentName, string endpoint, string apiKey, IConfiguration config)
+        {
+            var memoryConnector = GetLocalKernelMemory(deploymentName, endpoint, apiKey);
+
+            var question =
+                """
+        I booked tickets for a concert tonight in venue AFAS Live!.
+        I have this small black backpack, not big like for school, more like the mini
+        festival type 😅. it just fits my wallet, a hoodie and a bottle of water.
+        Is this allowed? 
+        """;
+
+            var response = memoryConnector.AskAsync(question);
+            Console.WriteLine("******** RESPONSE WITH MEMORY ***********");
+            Console.WriteLine(response.Result.Result);
+
+        }
+
+
+        public async Task AskVenueQuestion(string deploymentName, string endpoint, string apiKey, IConfiguration config)
+        {
+            var memoryConnector = GetLocalKernelMemory(deploymentName, endpoint, apiKey);
+            var question =
+                """
+                Which venue allows a backpack?
+                """;
+            var response = memoryConnector.AskAsync(question);
+            Console.WriteLine("******** RESPONSE WITH MEMORY ***********");
+            Console.WriteLine(response.Result.Result);
+        }
+
         private async Task<string> GetResponseOnQuestion(Kernel kernel, string question, string policyContext)
         {
 

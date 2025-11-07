@@ -20,7 +20,10 @@ namespace modulerag
 
         //    await new ChatWithRag().RAG_with_single_prompt(model, endpoint, token, config);
 
-            await new ChatWithRag().IngestDocuments(model, endpoint, token, config);
+            //await new ChatWithRag().IngestDocuments(model, endpoint, token, config);
+
+            // await new ChatWithRag().RaG_With_Memory(model, endpoint, token, config);
+            await new ChatWithRag().AskVenueQuestion(model, endpoint, token, config);
         }
     }
 }

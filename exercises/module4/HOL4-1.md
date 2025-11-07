@@ -204,4 +204,6 @@ Now you are ready to run the application. Run the console application and see th
 
 Try also with other questions and other venue policies. See how the model is able to answer questions based on the injected knowledge.
 
+
+## The End 
 This concludes lab 4.1. You have learned how to build a simple RAG system using a single prompt and how to use an LLM to pick the right knowledge based on the user question.
