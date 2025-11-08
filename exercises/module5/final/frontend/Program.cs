@@ -35,6 +35,8 @@ builder.Services.AddHttpClient(Options.DefaultName)
 builder.Services.AddSingleton<Settings>();
 builder.Services.AddApplicationInsightsTelemetry();
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -52,6 +54,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.MapHub<ChatHub>("/chatHub");
 
 app.MapControllerRoute(
     name: "default",
