@@ -1,0 +1,23 @@
+using System;
+using Microsoft.AspNetCore.SignalR;
+
+namespace GloboTicket.Frontend.Services.AI;
+
+public class ChatHub() : Hub
+{
+    override public Task OnConnectedAsync()
+    {
+        Console.WriteLine($"Client connected: {Context.ConnectionId}");
+        return base.OnConnectedAsync();
+    }
+
+    public async Task SendMessage(string message)
+    {
+        await Clients.All.SendAsync("NewResponse");
+
+        // Simulate streaming response
+        await Clients.All.SendAsync("ReceiveMessagePart", message);
+
+        await Clients.All.SendAsync("ResponseDone");
+    }
+}
