@@ -6,6 +6,7 @@ using Prometheus;
 using HealthChecks.UI.Client;
 using GloboTicket.Frontend.HealthChecks;
 using Microsoft.Extensions.Options;
+using GloboTicket.Frontend.Services.AI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,10 @@ builder.Services.AddHttpClient(Options.DefaultName)
 builder.Services.AddSingleton<Settings>();
 builder.Services.AddApplicationInsightsTelemetry();
 
+builder.Services.AddSignalR();
+
+builder.Services.AddSemanticKernelServices(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,7 +47,7 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    //app.UseHsts();
 }
 
 // Turning this off to simplify the running in Kubernetes demo
@@ -53,10 +58,11 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.MapHub<ChatHub>("/chatHub");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=EventCatalog}/{action=Index}/{id?}");
-
 
 //map the livelyness and readyness probes
 app.MapHealthChecks("/health/ready",

@@ -1,0 +1,222 @@
+﻿@{
+    ViewData["Title"] = "Chat Support";
+}
+
+<style>
+    body {
+        padding-bottom: 90px; /* Make room for fixed input */
+    }
+
+    .chat-container {
+        max-width: 80%;
+        margin: 2rem auto 0 auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        padding: 2rem 2rem 1rem 2rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-input-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-top: 1px solid #e9ecef;
+        padding: 0.5rem 0;
+        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    .chat-input-inner {
+        max-width: 80%;
+        margin: 0 auto;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 0.75rem;
+    }
+
+    .form-control-modern {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        width: 100%;
+    }
+
+    .form-control-modern:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        outline: none;
+    }
+
+    .btn-material {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 12px 24px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        min-width: 120px;
+    }
+
+    .btn-material:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    }
+
+    .btn-material:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-messages {
+        background: #f8f9fa;
+        border-radius: 8px;
+        height: 500px;
+        overflow-y: auto;
+        padding: 1rem;
+        border: 1px solid #e9ecef;
+        margin-bottom: 1rem;
+        scroll-behavior: smooth;
+    }
+
+    .chat-messages ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .chat-messages li {
+        background: white;
+        margin-bottom: 0.5rem;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        border-left: 3px solid #667eea;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .chat-title {
+        color: #374151;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .input-group {
+        display: flex;
+        gap: 0.75rem;
+        align-items: end;
+    }
+
+    .input-group .form-control-modern {
+        flex: 1;
+    }
+
+    /* Custom scrollbar for webkit browsers */
+    .chat-messages::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .chat-messages::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb:hover {
+        background: #a1a1a1;
+    }
+</style>
+
+<div class="chat-container">
+    <h2 class="chat-title">💬 Chat Support</h2>
+    
+    <div class="chat-messages">
+        <ul id="messagesList"></ul>
+    </div>
+</div>
+
+<div class="chat-input-container">
+    <div class="chat-input-inner">
+        <div class="input-group">
+            <input type="text" class="form-control-modern" id="messageInput" placeholder="Type your message here..." />
+            <button type="button" id="sendButton" class="btn-material">
+                Send
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-scroll function to scroll to bottom of messages
+function scrollToBottom() {
+    const messagesContainer = document.querySelector('.chat-messages');
+    if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+}
+
+// Call scrollToBottom whenever new messages are added
+// This will work with your existing SignalR chat functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const messagesList = document.getElementById('messagesList');
+    
+    // Use MutationObserver to detect when new messages are added
+    if (messagesList) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                    // Delay scroll to allow for DOM updates and animations
+                    setTimeout(scrollToBottom, 100);
+                }
+            });
+        });
+        
+        observer.observe(messagesList, { childList: true, subtree: true });
+    }
+
+    // Also scroll on page load
+    scrollToBottom();
+
+    // Allow Enter key to send message
+    const messageInput = document.getElementById('messageInput');
+    if (messageInput) {
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('sendButton').click();
+            }
+        });
+    }
+});
+</script>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>
