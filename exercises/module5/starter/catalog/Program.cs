@@ -1,4 +1,5 @@
 using GloboTicket.Catalog.DbContexts;
+using GloboTicket.Catalog.MCP;
 using GloboTicket.Catalog.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +12,15 @@ builder.Services.AddHttpClient();
 builder.Services.AddDbContext<EventCatalogDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IEventRepository, SqlEventRepository>();
+builder.Services.AddScoped<CatalogTool>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddMcpServer()
+    .WithHttpTransport()
+    .WithToolsFromAssembly();
 
 var app = builder.Build();
 
@@ -43,5 +49,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapMcp("/mcp");
 
 app.Run();
