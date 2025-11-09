@@ -7,6 +7,7 @@ using HealthChecks.UI.Client;
 using GloboTicket.Frontend.HealthChecks;
 using Microsoft.Extensions.Options;
 using GloboTicket.Frontend.Services.AI;
+using ModelContextProtocol.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,7 @@ builder.Services.AddHttpClient<IOrderSubmissionService, HttpOrderSubmissionServi
     c.BaseAddress = new Uri(sp.GetService<IConfiguration>()["ApiConfigs:Ordering:Uri"]);
 });
 
+
 builder.Services.AddSingleton<IShoppingBasketService, InMemoryShoppingBasketService>();
 builder.Services.AddSingleton<Settings>();
 
@@ -38,7 +40,7 @@ builder.Services.AddApplicationInsightsTelemetry();
 
 builder.Services.AddSignalR();
 
-builder.Services.AddSemanticKernelServices(builder.Configuration);
+await builder.Services.AddSemanticKernelServices(builder.Configuration);
 
 var app = builder.Build();
 
