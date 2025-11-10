@@ -105,7 +105,11 @@ namespace agent_demo01
             // create the agent orchestration setup, so they can chat with each other and then provide a final result.
             var kernel = CreateKernelWithChatCompletion(magenticModel, endpoint, apiKey);   
             StandardMagenticManager manager =
-                        new(kernel.GetRequiredService<IChatCompletionService>(), new OpenAIPromptExecutionSettings())
+                        new(kernel.GetRequiredService<IChatCompletionService>(),
+                        new OpenAIPromptExecutionSettings()
+                        {
+                            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+                        })
                         {
                             InteractiveCallback = async () =>
                             {
