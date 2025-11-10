@@ -16,7 +16,7 @@ namespace agent_demo01
             string deploymentName = config.GetSection("OpenAI").GetValue<string>("Model") ?? throw new ArgumentException("OpenAI Model not set");
             string endpoint = config.GetSection("OpenAI").GetValue<string>("EndPoint") ?? throw new ArgumentException("OpenAI EndPoint not set");
             string apiKey = config.GetSection("OpenAI").GetValue<string>("ApiKey") ?? throw new ArgumentException("OpenAIKey not set");
-            string magenticModel = config.GetValue<string>("magenticModel")?? throw new ArgumentException("magentic model not set");
+            //string magenticModel = config.GetValue<string>("magenticModel")?? throw new ArgumentException("magentic model not set");
             var info = new TicketInformation() { 
                 Artist = "Bruce springsteen",
                 Location = "AFAS Live, netherlands",
