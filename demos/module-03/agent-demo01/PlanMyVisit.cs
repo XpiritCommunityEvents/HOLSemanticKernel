@@ -29,10 +29,8 @@ namespace agent_demo01
         // Create a personalized visit plan containing parking, bag policy, timing, accessibility and hotel reservation
         public async Task<bool> PlanVisit(TicketInformation info, string deploymentName, string endpoint, string apiKey, string magenticModel)
         {
-            
             var client = new OpenAIClient(new ApiKeyCredential(apiKey), 
                 new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
-
 
             //IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
             //kernelBuilder.AddOpenAIChatCompletion(deploymentName, client);
@@ -40,14 +38,14 @@ namespace agent_demo01
             //                     s => s.AddConsole().SetMinimumLevel(LogLevel.Trace));
             //Kernel kernel = kernelBuilder.Build();
 
-            ChatCompletionAgent congiergeAgent =
+            ChatCompletionAgent conciergeAgent =
               new()
               {
-                  Name = "Congierge",
+                  Name = "Concierge",
                   Instructions = """
-                  You coordinate the booking of hotels and transportation. You critique the provided solutions untill you are 
+                  You coordinate the booking of hotels and transportation. You critique the provided solutions until you are 
                   happy with the results. this is a hotel nights booked and transportation arranged for the customer.
-                  You ask the customer to confirm the purchase of the iteary and after confirmation you book the various items.
+                  You ask the customer to confirm the purchase of the itinerary and after confirmation you book the various items.
                   """,
                   Description = "An agent that orchestrates a visit to a music concert including hotel, dinner and transportation",
                   Kernel = CreateKernelWithChatCompletion(deploymentName, endpoint, apiKey),
@@ -64,7 +62,7 @@ namespace agent_demo01
                   Name = "HotelReservationAgent",
                   Instructions = """
                   You are an expert in finding hotel rooms close to music concert locations.You provide some options what you have found and
-                  wait for the Congierge to approve the booking of the hotel rooms you suggested. You always suggest 3 options with different price ranges.
+                  wait for the Concierge to approve the booking of the hotel rooms you suggested. You always suggest 3 options with different price ranges.
                   """,
                   Description = "An agent that finds hotel rooms close to the concert location",
                   Kernel = CreateKernelWithChatCompletion(deploymentName, endpoint, apiKey),
@@ -81,9 +79,9 @@ namespace agent_demo01
               {
                   Name = "transportationAgent",
                   Instructions = """
-                  You are an expert in finding transportation from a given hotel location to the concert location. You will try to get the best optio
-                  that ensures the customers are at least 30 minutes before the concert starts at the venue and you search for options that are most convient 
-                  and best value for price. You always suggest 3 options with different price ranges. the moment the congierge approves your selection you are allowed to 
+                  You are an expert in finding transportation from a given hotel location to the concert location. You will try to get the best option.
+                  that ensures the customers are at least 30 minutes before the concert starts at the venue and you search for options that are most convenient 
+                  and best value for price. You always suggest 3 options with different price ranges. the moment the concierge approves your selection you are allowed to 
                   book the transportation.
                   """,
                   Description = "An agent that finds transportation options from hotel to concert location",
@@ -92,7 +90,7 @@ namespace agent_demo01
                   {
                       // Add Console logging provider
                       builder.AddConsole();
-                  }),
+                  })
               };
 
             var InitialChatMessage = new ChatMessageContent()
@@ -104,8 +102,8 @@ namespace agent_demo01
 
             var monitor = new OrchestrationMonitor();
 
-            // create the agent orchestration setup, so they can chat with eachother and then provide a final result.
-            var kernel =CreateKernelWithChatCompletion(magenticModel, endpoint, apiKey);   
+            // create the agent orchestration setup, so they can chat with each other and then provide a final result.
+            var kernel = CreateKernelWithChatCompletion(magenticModel, endpoint, apiKey);   
             StandardMagenticManager manager =
                         new(kernel.GetRequiredService<IChatCompletionService>(), new OpenAIPromptExecutionSettings())
                         {
@@ -123,7 +121,7 @@ namespace agent_demo01
                            
                         };
             MagenticOrchestration orchestration =
-                new(manager, congiergeAgent, transportationAgent, hotelReservationAgent)
+                new(manager, conciergeAgent, transportationAgent, hotelReservationAgent)
                 {
                     LoggerFactory = LoggerFactory.Create(builder =>
                     {
@@ -136,8 +134,6 @@ namespace agent_demo01
                     Name = "PlanMyVisitOrchestration",
                     
                 };
-
-
 
             // Start the runtime
             InProcessRuntime runtime = new();
@@ -157,14 +153,10 @@ namespace agent_demo01
 
             foreach(var message in results)
                 Console.WriteLine(message.ToString());
-            
-
            
             return true;
         }
-
        
-
         public Kernel CreateKernelWithChatCompletion(string deploymentName, string endpoint, string apiKey)
         {
             var client = new OpenAIClient(new ApiKeyCredential(apiKey),
@@ -202,6 +194,7 @@ namespace agent_demo01
                 System.Console.WriteLine($"\n# STREAMED {authorRole ?? AuthorRole.Assistant}{(authorName is not null ? $" - {authorName}" : string.Empty)}: {builder}\n");
             }
         }
+
         protected sealed class OrchestrationMonitor
         {
             public List<StreamingChatMessageContent> StreamedResponses = [];
