@@ -19,6 +19,7 @@ using Microsoft.SemanticKernel.Agents.Orchestration.GroupChat;
 using Microsoft.SemanticKernel.Agents.Magentic;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using UseSemanticKernelFromNET.Plugins;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 #pragma warning disable SKEXP0110 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
 namespace agent_demo01
@@ -38,6 +39,8 @@ namespace agent_demo01
             //                     s => s.AddConsole().SetMinimumLevel(LogLevel.Trace));
             //Kernel kernel = kernelBuilder.Build();
 
+            var kernel = CreateKernelWithChatCompletion(deploymentName, endpoint, apiKey);
+
             ChatCompletionAgent conciergeAgent =
               new()
               {
@@ -48,7 +51,7 @@ namespace agent_demo01
                   You ask the customer to confirm the purchase of the itinerary and after confirmation you book the various items.
                   """,
                   Description = "An agent that orchestrates a visit to a music concert including hotel, dinner and transportation",
-                  Kernel = CreateKernelWithChatCompletion(deploymentName, endpoint, apiKey),
+                  Kernel = kernel,
                   LoggerFactory = LoggerFactory.Create(builder =>
                   {
                       // Add Console logging provider
@@ -65,19 +68,22 @@ namespace agent_demo01
                   wait for the Concierge to approve the booking of the hotel rooms you suggested. You always suggest 3 options with different price ranges.
                   """,
                   Description = "An agent that finds hotel rooms close to the concert location",
-                  Kernel = CreateKernelWithChatCompletion(deploymentName, endpoint, apiKey),
+                  Kernel = kernel,
                   LoggerFactory = LoggerFactory.Create(builder =>
                   {
                       // Add Console logging provider
                       builder.AddConsole();
                   }),
+                  Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings
+                  {
+                     FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+                  })
               };
-             hotelReservationAgent.Kernel.Plugins.AddFromObject(new HotelPlugin());
 
             ChatCompletionAgent transportationAgent =
               new()
               {
-                  Name = "transportationAgent",
+                  Name = "TransportationAgent",
                   Instructions = """
                   You are an expert in finding transportation from a given hotel location to the concert location. You will try to get the best option.
                   that ensures the customers are at least 30 minutes before the concert starts at the venue and you search for options that are most convenient 
@@ -85,7 +91,7 @@ namespace agent_demo01
                   book the transportation.
                   """,
                   Description = "An agent that finds transportation options from hotel to concert location",
-                  Kernel = CreateKernelWithChatCompletion(deploymentName, endpoint, apiKey),
+                  Kernel = kernel,
                   LoggerFactory = LoggerFactory.Create(builder =>
                   {
                       // Add Console logging provider
@@ -103,7 +109,6 @@ namespace agent_demo01
             var monitor = new OrchestrationMonitor();
 
             // create the agent orchestration setup, so they can chat with each other and then provide a final result.
-            var kernel = CreateKernelWithChatCompletion(magenticModel, endpoint, apiKey);   
             StandardMagenticManager manager =
                         new(kernel.GetRequiredService<IChatCompletionService>(),
                         new OpenAIPromptExecutionSettings()
@@ -163,16 +168,18 @@ namespace agent_demo01
        
         public Kernel CreateKernelWithChatCompletion(string deploymentName, string endpoint, string apiKey)
         {
-            var client = new OpenAIClient(new ApiKeyCredential(apiKey),
-                new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
+            //var client = new OpenAIClient(new ApiKeyCredential(apiKey),
+            //    new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
 
             IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
-            kernelBuilder.AddOpenAIChatCompletion(deploymentName, client);
+            kernelBuilder.AddAzureAIInferenceChatCompletion(deploymentName, apiKey, new Uri(endpoint));
             kernelBuilder.Services.AddLogging(
                                  s => s.AddConsole().SetMinimumLevel(LogLevel.Trace));
 
             Kernel kernel = kernelBuilder.Build();
-         
+
+            kernel.Plugins.AddFromObject(new HotelPlugin());
+
             return kernel;
 
         }
