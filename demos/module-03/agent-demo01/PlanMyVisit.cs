@@ -1,45 +1,34 @@
-﻿using Microsoft.SemanticKernel.Agents;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
-
-using OpenAI;
-using System.ClientModel;
-using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Agents.Orchestration.Handoff;
-using Microsoft.SemanticKernel.Agents.Runtime.InProcess;
-
+using Microsoft.SemanticKernel.Agents;
+using Microsoft.SemanticKernel.Agents.Magentic;
 using Microsoft.SemanticKernel.Agents.Orchestration;
-using Amazon.S3.Model;
-using System.Threading;
+using Microsoft.SemanticKernel.Agents.Runtime.InProcess;
+using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using DocumentFormat.OpenXml.Bibliography;
-using Microsoft.SemanticKernel.Agents.Orchestration.GroupChat;
-using Microsoft.SemanticKernel.Agents.Magentic;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
 using UseSemanticKernelFromNET.Plugins;
-using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
+
 #pragma warning disable SKEXP0110 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
 namespace agent_demo01
 {
     public class PlanMyVisit
     {
+        private readonly LogLevel logLevel = LogLevel.Information;
+
         // goal:
         // Create a personalized visit plan containing parking, bag policy, timing, accessibility and hotel reservation
         public async Task<bool> PlanVisit(TicketInformation info, string deploymentName, string endpoint, string apiKey, string magenticModel)
         {
-            var client = new OpenAIClient(new ApiKeyCredential(apiKey), 
-                new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
-
-            //IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
-            //kernelBuilder.AddOpenAIChatCompletion(deploymentName, client);
-            //kernelBuilder.Services.AddLogging(
-            //                     s => s.AddConsole().SetMinimumLevel(LogLevel.Trace));
-            //Kernel kernel = kernelBuilder.Build();
-
             var kernel = CreateKernelWithChatCompletion(deploymentName, endpoint, apiKey);
+
+            var settings = new AzureOpenAIPromptExecutionSettings()
+            {
+                FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+            };
 
             ChatCompletionAgent conciergeAgent =
               new()
@@ -55,12 +44,9 @@ namespace agent_demo01
                   LoggerFactory = LoggerFactory.Create(builder =>
                   {
                       // Add Console logging provider
-                      builder.AddConsole();
+                      builder.AddConsole().SetMinimumLevel(logLevel);
                   }),
-                  Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings()
-                  {
-                      FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
-                  })
+                  Arguments = new KernelArguments(settings)
               };
 
             ChatCompletionAgent hotelReservationAgent =
@@ -76,12 +62,9 @@ namespace agent_demo01
                   LoggerFactory = LoggerFactory.Create(builder =>
                   {
                       // Add Console logging provider
-                      builder.AddConsole();
+                      builder.AddConsole().SetMinimumLevel(logLevel);
                   }),
-                  Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings
-                  {
-                     FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
-                  })
+                  Arguments = new KernelArguments(settings)
               };
 
             ChatCompletionAgent transportationAgent =
@@ -99,12 +82,9 @@ namespace agent_demo01
                   LoggerFactory = LoggerFactory.Create(builder =>
                   {
                       // Add Console logging provider
-                      builder.AddConsole();
+                      builder.AddConsole().SetMinimumLevel(logLevel);
                   }),
-                  Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings()
-                  {
-                      FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
-                  })
+                  Arguments = new KernelArguments(settings)
               };
 
             var InitialChatMessage = new ChatMessageContent()
@@ -118,38 +98,36 @@ namespace agent_demo01
 
             // create the agent orchestration setup, so they can chat with each other and then provide a final result.
             StandardMagenticManager manager =
-                        new(kernel.GetRequiredService<IChatCompletionService>(),
-                        new AzureOpenAIPromptExecutionSettings()
-                        {
-                            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
-                        })
-                        {
-                            InteractiveCallback = () =>
-                            {
-                                Console.WriteLine("\n# Press Enter to continue the orchestration...");
-                                var userinput = Console.ReadLine();
-                                return ValueTask.FromResult(new ChatMessageContent()
-                                {
-                                    Role = AuthorRole.User,
-                                    Content = userinput
-                                });
-                            },
-                            MaximumInvocationCount = 5,
-                           
-                        };
+                   new(
+                       kernel.GetRequiredService<IChatCompletionService>(),
+                       new AzureOpenAIPromptExecutionSettings()
+                   )
+                   {
+                       InteractiveCallback = () =>
+                       {
+                           Console.WriteLine("\n# Press Enter to continue the orchestration...");
+                           var userinput = Console.ReadLine();
+                           return ValueTask.FromResult(new ChatMessageContent()
+                           {
+                               Role = AuthorRole.User,
+                               Content = userinput
+                           });
+                       },
+                       MaximumInvocationCount = 5,
+                   };
+
             MagenticOrchestration orchestration =
                 new(manager, conciergeAgent, transportationAgent, hotelReservationAgent)
                 {
                     LoggerFactory = LoggerFactory.Create(builder =>
                     {
                         // Add Console logging provider
-                        builder.AddConsole();
+                        builder.AddConsole().SetMinimumLevel(logLevel);
                     }),
                     //ResponseCallback = monitor.ResponseCallback,
                     StreamingResponseCallback =  monitor.StreamingResultCallback,
                     Description = "Orchestration to plan a visit to a music concert including hotel and transportation",
                     Name = "PlanMyVisitOrchestration",
-                    
                 };
 
             // Start the runtime
@@ -161,6 +139,7 @@ namespace agent_demo01
             Console.WriteLine("# Orchestration is running...");
 
             var response = await result.GetValueAsync(TimeSpan.FromSeconds(300));
+
             Console.WriteLine("# Orchestration is done...");
 
             //write the orchestration history
@@ -175,20 +154,20 @@ namespace agent_demo01
        
         public Kernel CreateKernelWithChatCompletion(string deploymentName, string endpoint, string apiKey)
         {
-            //var client = new OpenAIClient(new ApiKeyCredential(apiKey),
-            //    new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
-
             IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
-            kernelBuilder.AddAzureAIInferenceChatCompletion(deploymentName, apiKey, new Uri(endpoint));
+
+            kernelBuilder.AddAzureOpenAIChatCompletion(deploymentName, endpoint, apiKey);
+            //kernelBuilder.AddAzureAIInferenceChatCompletion(deploymentName, apiKey, new Uri(endpoint));
+
             kernelBuilder.Services.AddLogging(
-                                 s => s.AddConsole().SetMinimumLevel(LogLevel.Trace));
+                                 s => s.AddConsole().SetMinimumLevel(logLevel));
+
+            // add plugin BEFORE building the kernel
+            kernelBuilder.Plugins.AddFromType<HotelPlugin>();
 
             Kernel kernel = kernelBuilder.Build();
 
-            kernel.Plugins.AddFromObject(new HotelPlugin());
-
             return kernel;
-
         }
 
         protected static void WriteStreamedResponse(IEnumerable<StreamingChatMessageContent> streamedResponses)
@@ -196,6 +175,7 @@ namespace agent_demo01
             string? authorName = null;
             AuthorRole? authorRole = null;
             StringBuilder builder = new();
+
             foreach (StreamingChatMessageContent response in streamedResponses)
             {
                 authorName ??= response.AuthorName;
@@ -203,7 +183,7 @@ namespace agent_demo01
 
                 if (!string.IsNullOrEmpty(response.Content))
                 {
-                    builder.Append($"{JsonSerializer.Serialize(response.Content)}");
+                    builder.Append(response.Content);
                 }
             }
 
