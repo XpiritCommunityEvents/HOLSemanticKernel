@@ -57,6 +57,10 @@ namespace agent_demo01
                       // Add Console logging provider
                       builder.AddConsole();
                   }),
+                  Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings()
+                  {
+                      FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
+                  })
               };
 
             ChatCompletionAgent hotelReservationAgent =
@@ -96,6 +100,10 @@ namespace agent_demo01
                   {
                       // Add Console logging provider
                       builder.AddConsole();
+                  }),
+                  Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings()
+                  {
+                      FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
                   })
               };
 
@@ -111,9 +119,9 @@ namespace agent_demo01
             // create the agent orchestration setup, so they can chat with each other and then provide a final result.
             StandardMagenticManager manager =
                         new(kernel.GetRequiredService<IChatCompletionService>(),
-                        new OpenAIPromptExecutionSettings()
+                        new AzureOpenAIPromptExecutionSettings()
                         {
-                            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+                            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
                         })
                         {
                             InteractiveCallback = () =>
