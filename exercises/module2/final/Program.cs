@@ -42,6 +42,7 @@ kernelBuilder.Plugins.AddFromFunctions(
     pluginName: "GitHub",
     functions: tools.Select(x => x.AsKernelFunction()));
 
+kernelBuilder.Plugins.AddFromType<Microsoft.SemanticKernel.Plugins.Core.TimePlugin>();
 kernelBuilder.Plugins.AddFromType<DiscountPlugin>();
 kernelBuilder.Services.AddTransient<IFunctionInvocationFilter, AnonymousUserFilter>();
 
