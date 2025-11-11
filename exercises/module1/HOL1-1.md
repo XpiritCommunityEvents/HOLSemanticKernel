@@ -2,6 +2,8 @@
 
 In this lab, you will explore GitHub Models and learn the fundamentals of prompt engineering. You will experiment with system and user prompts, model parameters such as temperature and top-p, and evaluate how different configurations influence the model’s output.
 
+>Start with new prompts by clicking on the 🗑️ icon to clear previous content in the Playground. The chat has "memory" that retains context from previous interactions. To have a clear view, removing previous content is recommended.
+
 ---
 
 ## Enable GitHub Models
@@ -110,7 +112,7 @@ In this lab, you will explore GitHub Models and learn the fundamentals of prompt
 
 ### Steps
 
-1. Retrieve a **venue policy** (Markdown) from your exercise folder (for example, Ziggo Dome).
+1. Retrieve a **venue policy** (Markdown) from your `exercises/datasets/venue-policies` folder (for example, Friends Arena).
 
 2. Paste the following prompt and include your policy after the separator:
 

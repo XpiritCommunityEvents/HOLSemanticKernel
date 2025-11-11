@@ -11,7 +11,7 @@ In this lab, you will connect your C# application to GitHub Models through the A
 ### Steps
 
 1. Go to the [GitHub Models Marketplace](https://github.com/marketplace?type=models).
-2. Locate and click **GPT 5 Mini**.
+2. Locate and click **GPT 4o**.
    [Direct link to model](https://github.com/marketplace/models/azure-openai/gpt-4o)
 3. Click **Use this model**.
 4. Under **Configure Authentication**, select **Create Personal Access Token**.
