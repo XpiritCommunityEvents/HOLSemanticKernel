@@ -1,0 +1,66 @@
+﻿@model GloboTicket.Frontend.Models.View.BasketLineViewModel
+
+<tr class="@(Model.IsOnSpecialOffer ? "special-offer-row" : "")">
+    <td>
+        @Model.EventName
+        @if (Model.IsOnSpecialOffer)
+        {
+            <span class="badge badge-danger">SPECIAL OFFER</span>
+        }
+    </td>
+    <td>@Model.Date.DateTime.ToShortDateString()</td>
+    <td>
+        <div>@Model.VenueName</div>
+        <small class="text-muted">@Model.VenueCity, @Model.VenueState</small>
+    </td>
+    <td class="bold">
+        @if (Model.IsOnSpecialOffer)
+        {
+            <div>
+                <span style="text-decoration: line-through; color: #aaa">$@Model.OriginalPrice</span>
+                <span style="color: red; font-weight: bold;">$@Model.Price</span>
+            </div>
+            <div class="savings-text">
+                <small style="color: green;">Save $@(Model.OriginalPrice - Model.Price) per ticket!</small>
+            </div>
+        }
+        else
+        {
+            <span>$@Model.Price</span>
+        }
+    </td>
+    <td>
+        <form asp-action="UpdateLine">
+            <input type="hidden" name="LineId" value="@Model.LineId" />
+            <select name="TicketAmount" class="w-25" asp-for="@Model.Quantity">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <button type="submit" class="filterButton">Update</button>
+        </form>
+    </td>
+    <td class="bold big">
+        @if (Model.IsOnSpecialOffer)
+        {
+            <div>
+                <span style="text-decoration: line-through; color: #aaa">$@(Model.OriginalPrice * Model.Quantity)</span>
+                <span style="color: red; font-weight: bold;">$@(Model.Price * Model.Quantity)</span>
+            </div>
+            <div class="savings-text">
+                <small style="color: green;">Total savings: $@((Model.OriginalPrice - Model.Price) * Model.Quantity)!</small>
+            </div>
+        }
+        else
+        {
+            <span>$@(Model.Price * Model.Quantity)</span>
+        }
+    </td>
+    <td>
+        <a asp-action="RemoveLine" data-testid="RemoveLine" asp-route-lineId="@Model.LineId">
+            <img class="cancelIcon" src="~/img/times.svg" />
+        </a>
+    </td>
+</tr>

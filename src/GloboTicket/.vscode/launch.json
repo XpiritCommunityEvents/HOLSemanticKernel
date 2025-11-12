@@ -1,0 +1,72 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Frontend",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/frontend/bin/Debug/net8.0/frontend.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/frontend",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "sourceFileMap": {
+        "/Views": "${workspaceFolder}/Views"
+      }
+    },
+    {
+      "name": "Catalog Service",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-catalog",
+      "program": "${workspaceFolder}/catalog/bin/Debug/net8.0/catalog.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/catalog",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "Ordering Service",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-ordering",
+      "program": "${workspaceFolder}/ordering/bin/Debug/net8.0/ordering.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/ordering",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": ".NET Core Attach",
+      "type": "coreclr",
+      "request": "attach"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Launch All Services",
+      "configurations": ["Frontend", "Catalog Service", "Ordering Service"],
+      "preLaunchTask": "build",
+      "stopAll": true
+    }
+  ]
+}
