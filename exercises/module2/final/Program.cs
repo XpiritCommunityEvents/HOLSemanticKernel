@@ -64,7 +64,8 @@ var executionSettings = new OpenAIPromptExecutionSettings
     TopP = 1.0,
     FrequencyPenalty = 0.0,
     PresencePenalty = 0.0,
-    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
+    ResponseFormat = typeof(ArtistSuggestions),
 };
 
 Console.WriteLine("Hi! I am your AI assistant. Talk to me:");
