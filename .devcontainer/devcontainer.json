@@ -7,10 +7,8 @@
         "ms-dotnettools.vscode-dotnet-runtime",
         "ms-dotnettools.csharp",
         "ms-dotnettools.csdevkit",
-        "humao.rest-client",
         "ms-azuretools.vscode-docker",
         "github.copilot",
-        "ms-mssql.mssql",
         "bierner.markdown-mermaid"
       ]
     }
