@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
 
 namespace modulerag
 {
@@ -18,12 +21,38 @@ namespace modulerag
             var token = config["OpenAI:ApiKey"];
 
 
-        //    await new ChatWithRag().RAG_with_single_prompt(model, endpoint, token, config);
+            var kernelBuilder = Kernel
+                .CreateBuilder()
+                .AddOpenAIChatCompletion(model, new Uri(endpoint), token);
 
-            //await new ChatWithRag().IngestDocuments(model, endpoint, token, config);
+            var kernel = kernelBuilder.Build();
+            Console.WriteLine("Hi! I am your AI assistant. Talk to me:");
 
-            // await new ChatWithRag().RaG_With_Memory(model, endpoint, token, config);
-            await new ChatWithRag().AskVenueQuestion(model, endpoint, token, config);
+            var chatHistory = new ChatHistory();
+            chatHistory.AddSystemMessage("You are a digital assistant for GloboTicket, a concert ticketing company. You help customers with their ticket purchasing. Tone: warm and friendly, but to the point. Do not make things up when you don't know the answer. Just tell the user that you don't know the answer based on your knowledge. You also have access to GitHub using the GitHub MCP.");
+
+            var chatCompletionService = kernel.Services.GetService<IChatCompletionService>();
+
+            while (true)
+            {
+                Console.WriteLine();
+                Console.WriteLine("You:");
+
+                var prompt = Console.ReadLine();
+
+                chatHistory.AddUserMessage(prompt!);
+
+                Console.WriteLine();
+                Console.WriteLine("GloboTicket assistant:");
+
+
+                // streaming call
+                var responseStream = chatCompletionService!.GetStreamingChatMessageContentsAsync(chatHistory, kernel:kernel);
+                await foreach (var response in responseStream)
+                {
+                    Console.Write(response.Content);
+                }
+            }
         }
     }
 }

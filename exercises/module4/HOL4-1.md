@@ -1,15 +1,15 @@
 # Lab 4.1 - Adding RAG to your application with a single prompt
 
-In this lab you will learn how to build a simple Retrieval-Augmented Generation (RAG) system using a single prompt. By injecting knowledge into your promopt, you can already fine-tune your model. The knowledge is not part of the trained model, so you inject this to the prompt. The LLM does the res. It combines the knowledge from your domain with the rich language features to give structured and human-like answers. This is perfect in scenarios like customer support, where you want to provide accurate and context-aware responses based on specific policies or information.
+In this lab you will learn how to build a simple Retrieval-Augmented Generation (RAG) system using a single prompt. By injecting knowledge into your prompt, you can already fine-tune your model. The knowledge is not part of the trained model, so you inject this to the prompt. The LLM does the rest. It combines the knowledge from your domain with the rich language features to give structured and human-like answers. This is perfect in scenarios like customer support, where you want to provide accurate and context-aware responses based on specific policies or information.
 
->The code snippets and instructions in this lab are designed to be integrated into the existing console application you created in the previous labs. You can also choose to fully focus on this part of the workshop. For this a starter solution has been created for you in the `exercises/module4/start/. The code snippets below will build on this starter solution so that we will not overcomplicate samples. Be aware that file paths and namespaces might differ from your previous projects.
+>The code snippets and instructions in this lab are designed to be integrated into the existing console application you created in the previous labs. You can also choose to fully focus on this part of the workshop. For this a starter solution has been created for you in the `exercises/module4/start/`. The code snippets below will build on this starter solution so that we will not overcomplicate samples. Be aware that file paths and namespaces might differ from your previous project.
 
 ## Building RAG with a single prompt
 
 ### Steps
 
 #### 1. Open the solution 
-In the solution explorer in your codespace by right-clickin the solution file and choose `Open Solution`
+In the **Solution Explorer** in your codespace by right-clicking the solution file and choose `Open Solution`
 
 #### 2. Create ChatWithRag file 
 In your project, create a new file named `ChatWithRag.cs`. Leave the constructor empty for now.
@@ -18,36 +18,42 @@ In your project, create a new file named `ChatWithRag.cs`. Leave the constructor
 Use the following code
 
 ```csharp
-        public async Task RAG_with_single_prompt(string deploymentName, string endpoint, string apiKey, IConfiguration config)
-        {
-        }
+public async Task RAG_with_single_prompt(string deploymentName, string endpoint, string apiKey, IConfiguration config)
+{
+...
+}
 ```
 
 #### 4. Update Program.cs 
 Call this function from the main `Program.cs`
 
 ```csharp
-    await new ChatWithRag().RAG_with_single_prompt(model, endpoint, token, config);
+await new ChatWithRag().RAG_with_single_prompt(model, endpoint, token, config);
 ```
 
 #### 5. Add the KernelBuilder
-Now we will add the KernelBuild configuration to the method. We receive the deploymentName, endpoint and apiKey from the method parameters. We will use the OpenAI Chat Completion service. ChatCompletion is used to genereate conversational responses. In this case this the Chat Completion service will be used to process prompts that combine your domain knowledge (the "retrieval" part) with the model's language capabilities to generate informed, context-aware responses.
+Now we will add the KernelBuilder configuration to the method. We receive the deploymentName, endpoint and apiKey from the method parameters. We will use the OpenAI Chat Completion service. 
+
+ChatCompletion is used to genereate conversational responses. In this case the Chat Completion service will be used to process prompts that combine your domain knowledge (the "retrieval" part) with the model's language capabilities to generate informed, context-aware responses.
 
 Add the following code to add the KernelBuilder and OpenAI Chat Completion service
 
 ```csharp
-    IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
-    var client = new OpenAIClient(new ApiKeyCredential(apiKey), new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
-    kernelBuilder.AddOpenAIChatCompletion(deploymentName, client);
-    Kernel kernel = kernelBuilder.Build();
+IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
+
+var client = new OpenAIClient(new ApiKeyCredential(apiKey), new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
+kernelBuilder.AddOpenAIChatCompletion(deploymentName, client);
+Kernel kernel = kernelBuilder.Build();
 ```
 
 #### 6. Create a simple sample question 
-Now think of a question that can be asked to a model but will return nonsensical answers without context. For example, questions about venue policies. In the `exercises/datasets/venue-policies` folder you will find many sample venue policies from concert venues all over the world. Read through a number of them and see what kind of of information can be found within these polcies.
+Now think of a question that can be asked to a model but will return nonsensical answers without context. For example, questions about venue policies. 
+
+To get some inspiration for questions, you can find samples for venue policies in the `exercises/datasets/venue-policies` folder you will find many sample venue policies from concert venues all over the world. Read through a number of them and see what kind of of information can be found within these policies. 
 
 Pick one of these venues and create a question that requires knowledge about the venue policies.
 
-An typical question that a concert visitor could ask is:
+A typical question that a concert visitor could ask is:
 
 ```text
 I booked tickets for a concert tonight in venue AFAS Live!.
@@ -59,16 +65,13 @@ Is this allowed?
 Imagine asking this question to a model without any context about the venue policies. The model could give all kinds of answers, but they will not be based on the actual venue policies. So we need to make sure that the model has the right context to answer this question correctly.
 
 ### 7. Add the question in the application
-Now we will add the question to the application. Normally we would do this by getting thi question from user input or a chat, but for now we will just code this directly in the method. Add this on top of the method.
+Now we will add the question to the application. Normally we would do this by getting this question from user input or a chat, but for now we will just code this directly in the method. Add this on top of the method.
 
-```csharp
-var question =
-    """
-    I booked tickets for a concert tonight in venue AFAS Live!.
-    I have this small black backpack, not big like for school, more like the mini
-    festival type 😅. it just fits my wallet, a hoodie and a bottle of water.
-    Is this allowed? 
-    """;
+```text
+I booked tickets for a concert tonight in venue AFAS Live!.
+I have this small black backpack, not big like for school, more like the mini
+festival type 😅. it just fits my wallet, a hoodie and a bottle of water.
+Is this allowed? 
 ```
 
 #### 8. Getting a response

@@ -2,6 +2,8 @@
 
 In this lab, we will introduce Semantic Kernel into your application to make communication with your LLMs more flexible and powerful.
 
+> 💡For your convenience we have added a complete solution for the exercises in module 2. You can find this final solution in the `exercises/module/final` folder
+
 ## Add Semantic Kernel to your application
 
 **Goal:** Add the necessary dependencies and initialization code for using Semantic Kernel to your application.
