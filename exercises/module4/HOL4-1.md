@@ -28,25 +28,10 @@ public async Task RAG_with_single_prompt(string deploymentName, string endpoint,
 Call this function from the main `Program.cs`
 
 ```csharp
-await new ChatWithRag().RAG_with_single_prompt(model, endpoint, token, config);
+await new ChatWithRag().RAG_with_single_prompt(Kernel kernel);
 ```
 
-#### 5. Add the KernelBuilder
-Now we will add the KernelBuilder configuration to the method. We receive the deploymentName, endpoint and apiKey from the method parameters. We will use the OpenAI Chat Completion service. 
-
-ChatCompletion is used to genereate conversational responses. In this case the Chat Completion service will be used to process prompts that combine your domain knowledge (the "retrieval" part) with the model's language capabilities to generate informed, context-aware responses.
-
-Add the following code to add the KernelBuilder and OpenAI Chat Completion service
-
-```csharp
-IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
-
-var client = new OpenAIClient(new ApiKeyCredential(apiKey), new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
-kernelBuilder.AddOpenAIChatCompletion(deploymentName, client);
-Kernel kernel = kernelBuilder.Build();
-```
-
-#### 6. Create a simple sample question 
+#### 5. Create a simple sample question 
 Now think of a question that can be asked to a model but will return nonsensical answers without context. For example, questions about venue policies. 
 
 To get some inspiration for questions, you can find samples for venue policies in the `exercises/datasets/venue-policies` folder you will find many sample venue policies from concert venues all over the world. Read through a number of them and see what kind of of information can be found within these policies. 
@@ -59,25 +44,35 @@ A typical question that a concert visitor could ask is:
 I booked tickets for a concert tonight in venue AFAS Live!.
 I have this small black backpack, not big like for school, more like the mini
 festival type 😅. it just fits my wallet, a hoodie and a bottle of water.
-Is this allowed? 
+Is this allowed?
 ```
-
 Imagine asking this question to a model without any context about the venue policies. The model could give all kinds of answers, but they will not be based on the actual venue policies. So we need to make sure that the model has the right context to answer this question correctly.
 
-### 7. Add the question in the application
-Now we will add the question to the application. Normally we would do this by getting this question from user input or a chat, but for now we will just code this directly in the method. Add this on top of the method.
+### 6. Add the question in the application
+Now we will add the question to the application. Normally we would do this by getting this question from user input or a chat, but for now we will just code this directly in the `RAG_with_single_prompt` method.
 
-```text
+```csharp
+var question = 
+"""
 I booked tickets for a concert tonight in venue AFAS Live!.
 I have this small black backpack, not big like for school, more like the mini
 festival type 😅. it just fits my wallet, a hoodie and a bottle of water.
-Is this allowed? 
+Is this allowed?
+""";
+
+chatHistory.AddUserMessage(question);
+var questionResponse = chatCompletionService!.GetStreamingChatMessageContentsAsync(chatHistory, kernel:kernel);
+await foreach (var response in questionResponse)
+{
+    Console.Write(response.Content);
+}
 ```
 
 #### 8. Getting a response
 Now we need to add a method to generate a good response based on the question and the venue policy. For that we will pick a venue policy. In our example we ask something for AFAS Live in Amsterdam. So we will use the venue policy from the `exercises/datasets/venue-policies/AFAS_Live.md`
 
 We will add the following code
+
 ```csharp
 private async Task<string> GetResponseOnQuestion(Kernel kernel, string question)
 {
@@ -118,7 +113,7 @@ We inject the venue poliy as context to the prompt. But we have more venues, mor
 ```csharp
 public class SelectedVenue
 {
-    public string venueName { get; set; }
+    public string VenueName { get; set; }
 }
 ```
 
@@ -146,7 +141,7 @@ Now we know the venue name we can use this to load the right venue policy file. 
 ```csharp
 public class SelectedFile
 {
-    public string file { get; set; }
+    public string File { get; set; }
 }
 ```
 Then we can create the method that will get the right file based on the venue name. Becuase the files are not always named exactly like the venue name we will use an LLM to pick the right file. Add the following code to the `ChatWithRag` class.
