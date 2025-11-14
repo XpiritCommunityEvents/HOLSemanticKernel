@@ -11,47 +11,31 @@ Whichever environment you have, now would be a good time to familiarize yourself
 ## Running from GitHub Codespaces
 You can use GitHub Codespaces to run your development machine from the cloud. This way you do not have to setup anything on your development machine other than a modern browser. 
 
-If you followed the instructions in Lab 0 you should have a running codespace to get started. Once your codespace has opened, you will see a browser-based IDE that closely resembles Visual Studio Code. You can inspect the code. Once you are ready to start the application, open a terminal window and execute 
+If you followed the instructions in Lab 0 you should have a running codespace to get started. Once your codespace has opened, you will see a browser-based IDE that closely resembles Visual Studio Code. 
+
+The Globoticket application consists of a frontend and 2 backend services. IN order to see the data in the frontend, we use the catalog backend service. This service connects to a SQL Server Database that runs in a Docker container. 
+
+To check if the database is correctly running, open a terminal window in the Codespace and execute the following command
 
 ```cmd
-docker-compose up --build
+docker ps
+```
+you should see a running container for SQL Server as shown below:
+
+```
+marcelv/globoticket-default-db 
 ```
 
-You should see a window appear after starting the application composition using Docker-Compose Click the button in the popup to open the frontend on port 5001:
+It sometimes happens, that the container stopped or did not run. If you do not see the container running, you can start it by executing the following command in the terminal window:
 
-<img src="https://user-images.githubusercontent.com/5504642/173662514-8cf8bb49-f81b-4c6d-8b75-e7b988a4c1e2.png" width="400" />
-
-If you miss the popup you can still see all the containers and exposed ports running by looking at the small dialog mentioning the exposed ports. You can rightclick urls in the local address column and select "open in browser" to view that container on that port in the browser.
-
-<img src="https://user-images.githubusercontent.com/5504642/226200631-988f67bf-5a97-4903-9aa0-2af7fcc52b51.png" width="700" />
-
-Continue in the section [Exploring GloboTicket application](#Exploring-Globoticket-Application).
-
-## Working with Visual Studio 2022 or Visual Studio Code
-If you are not using GitHub Codespaces you will probably use one of the available versions of Visual Studio to work with the code from your local file system. Make sure you have cloned the Git repository for GloboTicket. 
-
-> #### Important!
-> You must first checkout the `start` branch to get started with the following labs. The main branch has the full solution corresponding to the result of your work at the end of the workshop after having completed all labs. 
-
-### Using Visual Studio 2022
-Open the globoticket-dapr.sln solution file in Visual Studio 2022. You can inspect the solution as usual. 
-Run the application by settings the Docker Compose project as the startup file and pressing F5.
-
-The application should build the images and start the container composition using the `docker-compose.yml` and `docker-compose.override.yml` files. After a successful launch Visual Studio should open a browser automatically. If not, navigate to http://localhost:5001/. 
-
-Continue in the section [Exploring GloboTicket application](https://github.com/XpiritCommunityEvents/DaprWorkshop/wiki/Lab-1:-Inspecting-GloboTicket#exploring-globoticket-application).
- 
-### Using Visual Studio Code
-Open the root folder of the cloned repository in Visual Studio Code. You can run the application by opening a Terminal window and executing 
 ```cmd
-docker-compose up --build
+docker run -d -p 1433:1433 marcelv/globoticket-default-db
 ```
-After the composition has started you should see a small dialog mentioning the exposed ports.
 
-<img src="https://user-images.githubusercontent.com/5504642/173662780-e5b272fd-7872-45b0-836a-8c6334efb395.png" width="700" />
+### Starting the application
+First we want to open the solution form the solutionexplorer to easily work with the Globoticket application. In the `src\Globoticket` folder you will find a `globoticket.sln` file. Right click this file and select `Open Solution` from the context menu.
 
-Right-click port 5001 for the frontend application and select `Open in Browser`. 
-Your browser should open and display the homepage of GloboTicket.
+In the solution folder you can then start the application. Right click the `catalog` project and select `Debug\Start without Debugging` from the context menu. Do the same for the `ordering` project.
 
 ## Exploring GloboTicket application
 The homepage of the GloboTicket webshop shows three available events. 
@@ -74,17 +58,9 @@ After completing the order you should get a confirmation page.
 
 <img src="https://user-images.githubusercontent.com/5504642/173663153-547ef3b5-177b-471e-8116-b2099e844256.png" width="300" />
 
-> Pro tip! Leave this page open, so you can repeat the process of making a purchase without having to fill out the form every time. We will be purchasing a lot of tickets in this workshop.
-
-Examine the logs for your application. Depending on the IDE you are using this will be different. Inspect the output. As an example, try and find the logging of the `ordering` service. After completing your order this should show something similar to this:
-
-<img src="https://user-images.githubusercontent.com/5504642/173663203-68183dd0-6fef-44f6-a150-3ff0f369a6f1.png" width="500" />
+Finally click the Chat button on top of the homepage. This will open up a simple chat window where you can interact with a chatbot. Onky the chatbot is quite limited at the moment. In the rest of the workshop we will use Semantic Kernel to enhance the chatbot experience. We will do exercises in simple console applications to get familiar with Semantic Kernel and then integrate the functionality in the GloboTicket application in the final lab.
 
 ## Finish lab
-You are all done. You have given the GloboTicket application a spin. In the next lab you will start using Dapr by adding support in the application.
+You are all done. You have given the GloboTicket application a spin. 
 
 Stop running your application. In Visual Studio Code and GitHub CodeSpaces you can stop the composition by pressing Ctrl+C in the terminal window. 
-
-<img src="https://user-images.githubusercontent.com/5504642/173663285-5882128d-08a0-48cc-989a-804047beff89.png" width="400" />
-
-In Visual Studio 2022 you can press Shift+F5 or click on the red square stop icon in the Debug toolbar.
