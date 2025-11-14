@@ -27,17 +27,17 @@ We will integrate the GitHub MCP server, which requires your authentication toke
 - Next, add this token to your .NET User Secrets:
 
   ```pwsh
-  dotnet user-secrets set "GitHubToken" "<token>" -p .\HolSemanticKernel.csproj
+  dotnet user-secrets set "GitHubToken" "<token>" -p ./HolSemanticKernel.csproj
   ```
 
 ## Integrate the `ModelContextProtocol` package
 
 The [`ModelContextProtocol` package](https://www.nuget.org/packages/ModelContextProtocol) is a library for developing and integrating MCP Servers in .NET applications. We will use it to integrate the GitHub MCP server with Semantic Kernel.
 
-- Install the `ModelContextProtocol` nuget package into your application:
+- Install the `ModelContextProtocol` NuGet package into your application:
 
   ```pwsh
-  dotnet add package ModelContextProtocol --prerelease -p .\HolSemanticKernel.csproj
+  dotnet add package ModelContextProtocol --prerelease
   ```
 
 - Bring in the necessary `using` statement in the top of your `Program.cs`:
@@ -46,7 +46,7 @@ The [`ModelContextProtocol` package](https://www.nuget.org/packages/ModelContext
   using ModelContextProtocol.Client;
   ```
 
-- From the `ModelContextProtocol` library, we can use an `McpClient` which we can add as a tool in the kernel. Add the following to your `Program.cs` _before_ the call to `kernelBuilder.Build();`:
+- From the `ModelContextProtocol` library, we can use an `McpClient` which we can add as a tool in the kernel. Add the following to your `Program.cs` _after_ the call to `kernelBuilder.Build();`:
 
    ```csharp
    var mcpClient = await McpClient.CreateAsync(new HttpClientTransport(
@@ -68,15 +68,20 @@ The [`ModelContextProtocol` package](https://www.nuget.org/packages/ModelContext
   ```csharp
   var tools = await mcpClient.ListToolsAsync();
 
-  kernelBuilder.Plugins.AddFromFunctions(
-    pluginName: "GitHub",
-    functions: tools.Select(x => x.AsKernelFunction()));
+  kernel.ImportPluginFromFunctions(
+    "GitHub",
+    tools.Select(x => x.AsKernelFunction()));
    ```
+
+  - To let the LLM know it can use the MCP, add this to the system prompt:
+    ```txt
+    You also have access to GitHub using the GitHub MCP.
+    ```
 
   The LLM is now aware of the GitHub MCP server and can invoke it to solve a user question.
 
-  - Start your application and ask the LLM to list the issues in the `XpiritCommunityEvents/HOLSemanticKernel` repo. It should list the issues from GitHub.
-  - Ask it to create a new issue in the `XpiritCommunityEvents/HOLSemanticKernel` repo, give it a title and a description and tell it to add no labels and no assignees. It should respond with the URL to the newly created issue.
+  - Start your application and ask the LLM to list the issues in your repository, named `XpiritCommunityEvents/attendee-workshopSK-<your GitHub handle>` repo. It should list the issues from GitHub.
+  - Ask it to create a new issue in the `XpiritCommunityEvents/attendee-workshopSK-<your GitHub handle>` repo, give it a title and a description and tell it to add no labels and no assignees. It should respond with the URL to the newly created issue.
 
 This shows how easy it is to integrate any MCP with LLMs. As long as you have your authentication set up, and the MCP Server is reachable from where your application runs, the LLM can issue a `tool_call` response, which it routed to the MCP through Semantic Kernel.
 

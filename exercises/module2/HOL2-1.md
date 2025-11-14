@@ -10,7 +10,7 @@ In this lab, we will introduce Semantic Kernel into your application to make com
 
 ### Steps
 
-1. Add the necessary Nuget packages to your application. In your Terminal window, type:
+1. Add the necessary NuGet packages to your application. In your Terminal window, type:
 
     ```pwsh
     dotnet add package Microsoft.SemanticKernel
@@ -18,8 +18,15 @@ In this lab, we will introduce Semantic Kernel into your application to make com
 
     This adds the base package for using Semantic Kernel.
 
-2. Leave the code for reading the API token from user secrets in your code, but remove the rest of the code added in the previous lab that works with the `ChatCompletionsClient`.
-3. Replace the removed code with:
+2. We're not going to call the model endpoint directly, but we're going to do this through Semantic Kernel. Leave the code for reading the API token from user secrets in your code, but remove the rest of the code added in the previous lab that works with the `ChatCompletionsClient`.
+3. Add the following `using` statements to the top of the `Program.cs`:
+
+    ```csharp
+    using Microsoft.SemanticKernel;
+    using Microsoft.SemanticKernel.ChatCompletions;
+    using Microsoft.Extensions.DependencyInjection;
+    ```
+4. Replace the removed code with:
 
     ```csharp
     var kernelBuilder = Kernel
@@ -44,16 +51,19 @@ In this lab, we will introduce Semantic Kernel into your application to make com
     while (true)
     {
         Console.WriteLine();
+        Console.WriteLine("You:");
 
         var prompt = Console.ReadLine();
 
         var response = await kernel.InvokePromptAsync(prompt);
-    
+
+        Console.WriteLine();
+        Console.WriteLine("GloboTicket assistant:);
         Console.WriteLine(response.GetValue<string>());
     }
     ```
 
-2. Start the application and test if you can interact with the LLM. Now try the following prompt sequence:
+2. Start the application using `dotnet run` and test if you can interact with the LLM. Now try the following prompt sequence:
 
     ```txt
     My name is <your name>
@@ -78,7 +88,7 @@ Your chat app is not very useful yet. As you have noticed, the LLM does not reme
 1. Instantiate a `ChatHistory` object just before the `while` loop. It will hold the conversation history between the user and the LLM.
 
     ```csharp
-    var history = new ChatHistory();
+    var chatHistory = new ChatHistory();
     ```
 
 2. Now instead of interacting with the `kernel` instance directly, ask it for an instance of `IChatCompletionService`:
@@ -139,10 +149,10 @@ We will give the LLM "knowledge" about artists and tickets later.
 
 ### Steps
 
-1. Create an instance of `AzureOpenAIPromptExecutionSettings` and set the parameters:
+1. Create an instance of `OpenAIPromptExecutionSettings` and set the parameters:
 
     ```csharp
-    var executionSettings = new AzureOpenAIPromptExecutionSettings
+    var executionSettings = new OpenAIPromptExecutionSettings
     {
         MaxTokens = 500,
         Temperature = 0.5,
@@ -152,7 +162,7 @@ We will give the LLM "knowledge" about artists and tickets later.
     };
     ```
 
-2. Add the `executionSettings` and `kernel` to the parameter list of
+2. Add the `executionSettings` and `kernel` to the parameter list of:
 
     ```csharp
     // ...

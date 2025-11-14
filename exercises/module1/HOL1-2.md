@@ -47,8 +47,8 @@ In this lab, you will connect your C# application to an LLM through the Azure AI
 1. Open your VS Code Codespace.
 2. Navigate to your project files.
 3. Open the `src\HolSemanticKernel` folder.
-4. Right Click the `HolSemanticKernel.csproj` file and select **Open in Intgrated Terminal**.
-5. Run the application:
+4. Right Click the `HolSemanticKernel.sln` file and select **Open Solution**. The C# Dev Kit will now load the solution, which gives you Intellisense.
+5. Run the application from the terminal, or by right clicking the project file and starting a debug session:
 
    ```pwsh
    dotnet run

@@ -10,7 +10,7 @@ In this lab, we will introduce Semantic Kernel into your application to make com
 
 ### Steps
 
-1. Add the necessary Nuget packages to your application. In your Terminal window, type:
+1. Add the necessary NuGet packages to your application. In your Terminal window, type:
 
     ```pwsh
     dotnet add package Microsoft.SemanticKernel

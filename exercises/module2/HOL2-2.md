@@ -2,7 +2,9 @@
 
 In this lab, we will implement a simple plugin that generates a random discount code when the user asks for it. First, we are going to invoke it manually, and then we will let the LLM automatically invoke it.
 
-The plugin we are going to create here is a simple hard coded random code generator. We will make a more sophisticated plugin that accesses the GloboTicket database later today. 
+The plugin we are going to create here is a simple hard coded random code generator. We will make a more sophisticated plugin that accesses the GloboTicket database later today.
+
+> 💡 If you want to step through your program in the debugger, set a breakpoint and run your application by right-clicking on the project in the **Solution Explorer** and choosing **Debug > Start New Instance**.
 
 ## Implement a GloboTicket discount plugin
 
@@ -43,12 +45,12 @@ The plugin we are going to create here is a simple hard coded random code genera
 
 We have now marked the `GetDiscountCode` method as a `KernelFunction` to be used by Semantic Kernel. Notice the label `"get_discount_code"` we gave it. This will be the name of the method that the LLM will refer to. Let's call it in our application:
 
-4. Register the plugin with the Semantic Kernel by adding the following line _just before_ the call to `kernelBuilder.Build()`:
+4. Register the plugin with the Semantic Kernel by adding the following line _just after_ the call to `kernelBuilder.Build()`:
 
     ```csharp
-    kernelBuilder.Plugins.AddFromType<DiscountPlugin>(); // <-- add this
-
     var kernel = kernelBuilder.Build();
+
+    kernel.ImportPluginFromType<DiscountPlugin>(); // <-- add this
     ```
 
 5. To call the plugin, add the following code to the chat loop in your application, just after reading the prompt from the console:
@@ -96,7 +98,7 @@ We need to add a bit more information to the plugin to make it discoverable for 
 3. Instruct the Semantic Kernel to automatically invoke functions by adding a property to the prompt execution settings:
 
     ```csharp
-    var executionSettings = new AzureOpenAIPromptExecutionSettings
+    var executionSettings = new OpenAIPromptExecutionSettings
     {
         MaxTokens = 500,
         Temperature = 0.5,
@@ -108,6 +110,8 @@ We need to add a bit more information to the plugin to make it discoverable for 
     ```
 
 4. Run the application again and ask for a discount. Does it invoke the `GetDiscount` method? Place a breakpoint inside that method to verify that it does.
+
+4. Ask the LLM for a lower price. It should offer to give you a discount, because it now knows that it has a discount plugin.
 
 5. Now tell the LLM your name and ask for a discount again. What happens to the `userName` parameter for the `GetDiscountCode`? Do you notice that the LLM automatically knows what to pass into the kernel function?
 
@@ -241,7 +245,7 @@ To show what is possible, we're going to create a YAML based prompt.
         AllowDangerouslySetContent = true
     });
   
-  kernel.Plugins.AddFromFunctions("music_recommender", [musicRecommender]);
+  kernel.ImportPluginFromFunctions("music_recommender", [musicRecommender]);
   ```
 
 The `CreateFunctionFromPromptYaml` extension method comes from the package we just added. Note that we're specifying the `HandlebarsPromptTemplateFactory` to indicate that the prompt has a Handlebars based syntax. `AllowDangerouslySetContent = true` is not recommended for production scenarios but it lets our GloboTicket assistant pass the user's music preference without having to do a value conversion to a simple `string`.
@@ -260,7 +264,7 @@ Finally, we are going to look at multi modal chats. Besides plain text, our LLMs
   var multiModalChat = new ChatHistory("Your job is to identify musical instruments from images.");
   multiModalChat.AddUserMessage(
   [
-    new Microsoft.SemanticKernel.TextContent("Can you identify this instrument?"),
+    new Microsoft.SemanticKernel.TextContent("Can you identify this instrument? Be specific about brand and type."),
     new Microsoft.SemanticKernel.ImageContent(File.ReadAllBytes("guitar.jpg"), "image/jpg")
   ]);
 

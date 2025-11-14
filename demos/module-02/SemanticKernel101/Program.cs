@@ -22,12 +22,12 @@ var kernelBuilder = Kernel
     .CreateBuilder()
     .AddOpenAIChatCompletion(model, new Uri(endpoint), token);
 
-kernelBuilder.Plugins.AddFromType<Microsoft.SemanticKernel.Plugins.Core.TimePlugin>();
-
-// kernelBuilder.Plugins.AddFromType<DiscountPlugin>();
 // kernelBuilder.Services.AddTransient<IFunctionInvocationFilter, AnonymousUserFilter>();
 
 var kernel = kernelBuilder.Build();
+
+kernel.ImportPluginFromType<Microsoft.SemanticKernel.Plugins.Core.TimePlugin>();
+//kernel.ImportPluginFromType<DiscountPlugin>();
 
 var executionSettings = new OpenAIPromptExecutionSettings
 {

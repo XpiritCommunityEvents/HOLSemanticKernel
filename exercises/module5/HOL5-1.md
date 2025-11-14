@@ -32,7 +32,7 @@ We will use Semantic Kernel in the `frontend` app so that we can have a chat int
 
   > ⚠️ Make sure not to commit any secrets to your Git repo!
 
-Also, the necessary Nuget packages are already added to the `frontend.csproj` file:
+Also, the necessary NuGet packages are already added to the `frontend.csproj` file:
 
 - `Microsoft.SemanticKernel`
 - `Microsoft.SemanticKernel.Plugins.Core` for `TimePlugin`

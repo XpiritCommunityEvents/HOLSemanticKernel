@@ -25,28 +25,23 @@ var kernelBuilder = Kernel
     .CreateBuilder()
     .AddOpenAIChatCompletion(model, new Uri(endpoint), token);
 
-var mcpClient = await McpClient.CreateAsync(new HttpClientTransport(
-    new HttpClientTransportOptions
-    {
-        Name = "GitHub",
-        Endpoint = new Uri("https://api.githubcopilot.com/mcp/"),
-        AdditionalHeaders = new Dictionary<string, string>
-        {
-            ["Authorization"] = $"Bearer {config["GitHubToken"]}"
-        }
-    }));
-
-var tools = await mcpClient.ListToolsAsync();
-
-kernelBuilder.Plugins.AddFromFunctions(
-    pluginName: "GitHub",
-    functions: tools.Select(x => x.AsKernelFunction()));
-
-kernelBuilder.Plugins.AddFromType<Microsoft.SemanticKernel.Plugins.Core.TimePlugin>();
-kernelBuilder.Plugins.AddFromType<DiscountPlugin>();
-kernelBuilder.Services.AddTransient<IFunctionInvocationFilter, AnonymousUserFilter>();
+// var mcpClient = await McpClient.CreateAsync(new HttpClientTransport(
+//     new HttpClientTransportOptions
+//     {
+//         Name = "GitHub",
+//         Endpoint = new Uri("https://api.githubcopilot.com/mcp/"),
+//         AdditionalHeaders = new Dictionary<string, string>
+//         {
+//             ["Authorization"] = $"Bearer {config["GitHubToken"]}"
+//         }
+//     }));
 
 var kernel = kernelBuilder.Build();
+
+// var tools = await mcpClient.ListToolsAsync();
+// kernel.ImportPluginFromFunctions("GitHub", tools.Select(x => x.AsKernelFunction()));
+kernel.ImportPluginFromType<Microsoft.SemanticKernel.Plugins.Core.TimePlugin>();
+kernel.ImportPluginFromType<DiscountPlugin>();
 
 var promptTemplate = File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "music_recommender.yaml"));
 var musicRecommender = kernel.CreateFunctionFromPromptYaml(
@@ -55,7 +50,7 @@ var musicRecommender = kernel.CreateFunctionFromPromptYaml(
     {
         AllowDangerouslySetContent = true
     });
-kernel.Plugins.AddFromFunctions("music_recommender", [musicRecommender]);
+kernel.ImportPluginFromFunctions("music_recommender", [musicRecommender]);
 
 var executionSettings = new OpenAIPromptExecutionSettings
 {
@@ -65,20 +60,20 @@ var executionSettings = new OpenAIPromptExecutionSettings
     FrequencyPenalty = 0.0,
     PresencePenalty = 0.0,
     FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
-    ResponseFormat = typeof(ArtistSuggestions),
+//    ResponseFormat = typeof(ArtistSuggestions),
 };
 
 Console.WriteLine("Hi! I am your AI assistant. Talk to me:");
 
 var chatHistory = new ChatHistory();
-chatHistory.AddSystemMessage("You are a digital assistant for GloboTicket, a concert ticketing company. You help customers with their ticket purchasing. Tone: warm and friendly, but to the point. Do not make things up when you don't know the answer. Just tell the user that you don't know the answer based on your knowledge.");
+chatHistory.AddSystemMessage("You are a digital assistant for GloboTicket, a concert ticketing company. You help customers with their ticket purchasing. Tone: warm and friendly, but to the point. Do not make things up when you don't know the answer. Just tell the user that you don't know the answer based on your knowledge. You also have access to GitHub using the GitHub MCP.");
 
 var chatCompletionService = kernel.Services.GetService<IChatCompletionService>();
 
 // var multiModalChat = new ChatHistory("Your job is to identify musical instruments from images.");
 // multiModalChat.AddUserMessage(
 // [
-//     new Microsoft.SemanticKernel.TextContent("Can you identify this instrument?"),
+//     new Microsoft.SemanticKernel.TextContent("Can you identify this instrument? Be specific about brand and type."),
 //     new Microsoft.SemanticKernel.ImageContent(File.ReadAllBytes("guitar.jpg"), "image/jpg")
 // ]);
 
@@ -88,6 +83,7 @@ var chatCompletionService = kernel.Services.GetService<IChatCompletionService>()
 while (true)
 {
     Console.WriteLine();
+    Console.WriteLine("You:");
 
     var prompt = Console.ReadLine();
 
@@ -105,6 +101,9 @@ while (true)
     // }
 
     chatHistory.AddUserMessage(prompt!);
+
+    Console.WriteLine();
+    Console.WriteLine("GloboTicket assistant:");
 
     // synchronous call
     var response = await chatCompletionService!.GetChatMessageContentsAsync(chatHistory, executionSettings, kernel);
