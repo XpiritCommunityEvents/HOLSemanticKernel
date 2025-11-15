@@ -16,7 +16,7 @@ var config = new ConfigurationBuilder()
 
 var token = config["OpenAI:ApiKey"] ?? throw new InvalidOperationException("Missing API Key");
 var model = "openai/gpt-4o";
-var endpoint = "https://models.github.ai/inference";
+var endpoint = "https://models.github.ai/orgs/XpiritComunnityEvents/inference";
 
 var kernelBuilder = Kernel
     .CreateBuilder()

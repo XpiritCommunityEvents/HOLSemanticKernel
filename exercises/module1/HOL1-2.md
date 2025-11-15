@@ -21,7 +21,7 @@ In this lab, you will connect your C# application to an LLM through the Azure AI
 8. Record the following information for later use:
 
    * Token
-   * Endpoint: `https://models.github.ai/inference`
+   * Endpoint: `https://models.github.ai/orgs/XpiritComunnityEvents/inference`
    * Model: `openai/gpt-4o`
 
    This is already configured in the appsettings.json file
@@ -30,7 +30,7 @@ In this lab, you will connect your C# application to an LLM through the Azure AI
    {
       "OpenAI": {
          "Model": "openai/gpt-4o",
-         "EndPoint": "https://models.github.ai/inference",
+         "EndPoint": "https://models.github.ai/orgs/XpiritComunnityEvents/inference",
          "ApiKey": "<set this in your user secrets>"
       }
    }
