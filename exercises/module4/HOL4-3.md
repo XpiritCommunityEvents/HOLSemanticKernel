@@ -27,10 +27,9 @@ public async Task RAG_with_memory(IConfiguration config)
         Is this allowed? 
         """;
 
-    var response = memoryConnector.AskAsync(question);
+    var response = await memoryConnector.AskAsync(question);
     Console.WriteLine("******** RESPONSE WITH MEMORY ***********");
-    Console.WriteLine(response.Result.Result);
-
+    Console.WriteLine(response.Result);
 }
 ```
 
