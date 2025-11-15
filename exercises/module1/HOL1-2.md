@@ -15,10 +15,11 @@ In this lab, you will connect your C# application to an LLM through the Azure AI
    [Direct link to model](https://github.com/marketplace/models/azure-openai/gpt-4o)
 3. Click **Use this model**.
 4. Under **Configure Authentication**, select **Create Personal Access Token**.
-5. On the next screen, select **Public Repositories**.
-6. Ensure that **Models: Read Only** is checked.
-7. Generate your token and copy it securely.
-8. Record the following information for later use:
+5. Make sure that the **Resource owner** is set to **XpiritCommunityEvents**
+6. On the next screen, select **Public Repositories**.
+7. Ensure that **Models: Read Only** is checked.
+8. Generate your token and copy it securely.
+9. Record the following information for later use:
 
    * Token
    * Endpoint: `https://models.github.ai/orgs/XpiritCommunityEvents/inference`
