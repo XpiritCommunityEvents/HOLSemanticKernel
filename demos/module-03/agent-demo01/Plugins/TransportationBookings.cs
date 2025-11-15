@@ -31,7 +31,7 @@ namespace agent_demo01.Plugins
 
         [KernelFunction("book_a_ride"),
          Description("makes it possible to book a selected ride")]
-        [return: Description("returns if the bookign was successfull")]
+        [return: Description("returns if the booking was successfull")]
         public bool BookARide(int rideID)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;

@@ -101,4 +101,5 @@ Console.WriteLine("******** Terminating, goal reached ***********");
 ```
 
 Now run the program and enter the dialog with the agent. If it gets back to you that it can't find more results, ask it e.g. to try harder, and you will see it starts doing more function calls to get more ride options.
- 
+
+This concludes Lab 3.3.

@@ -47,7 +47,7 @@ namespace UseSemanticKernelFromNET.Plugins
             int id)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Is it allowed to make the bookign for room with id: {id}");
+            Console.WriteLine($"Is it allowed to make the booking for room with id: {id}");
             Console.ResetColor();
             var consent = Console.ReadLine();
             return consent.Equals("yes", StringComparison.OrdinalIgnoreCase);
