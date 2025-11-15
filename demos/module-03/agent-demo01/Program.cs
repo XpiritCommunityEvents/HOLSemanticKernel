@@ -21,12 +21,16 @@ namespace agent_demo01
             //string magenticModel = config.GetValue<string>("magenticModel")?? throw new ArgumentException("magentic model not set");
             var info = new TicketInformation() { 
                 Artist = "Bruce springsteen",
-                Location = "Wembly, London, uk",
+                Location = "Wembly, Miami, USA",
                 EventName = "Bruce Springsteen Tours & Concerts",
                 EventDate = new DateTime(2026, 11, 15)
             };
+
+            await new SimpleAgent().FindRides(deploymentName, endpoint, apiKey);
+
+
              //await new PlanMyVisit().PlanVisit(info, deploymentName, endpoint, apiKey, deploymentName/*"openai/o4-mini"*/);
-             await new PlanMyVisit().PlanVisitWithHandoff(info, deploymentName, endpoint, apiKey);
+             //await new PlanMyVisit().PlanVisitWithHandoff(info, deploymentName, endpoint, apiKey);
 
         }
     }

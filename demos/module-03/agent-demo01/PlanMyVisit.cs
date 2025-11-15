@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using agent_demo01.Plugins;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
@@ -33,7 +34,7 @@ namespace agent_demo01
 
             ChatCompletionAgent conciergeAgent = CreateCongiereAgent(kernel, settings);
             ChatCompletionAgent hotelReservationAgent = CreateHotelReservationAgent(settings, deploymentName, endpoint, apiKey);
-            ChatCompletionAgent transportationAgent = CreateTransportationAgent(kernel);
+            ChatCompletionAgent transportationAgent = CreateTransportationAgent(settings, deploymentName, endpoint, apiKey);
 
             var InitialChatMessage = new ChatMessageContent()
             {
@@ -108,7 +109,9 @@ namespace agent_demo01
 
             ChatCompletionAgent conciergeAgent = CreateCongiereAgent(kernel, settings);
             ChatCompletionAgent hotelReservationAgent = CreateHotelReservationAgent(settings, deploymentName, endpoint, apiKey);
-            ChatCompletionAgent transportationAgent = CreateTransportationAgent(kernel);
+            ChatCompletionAgent transportationAgent = CreateTransportationAgent(settings, deploymentName, endpoint, apiKey);
+
+            //var c = await kernel.InvokePromptAsync("What is the color of the sky?");
 
             var InitialChatMessage = new ChatMessageContent()
             {
@@ -138,7 +141,7 @@ namespace agent_demo01
                     LoggerFactory = LoggerFactory.Create(builder =>
                     {
                         // Add Console logging provider
-                        builder.AddConsole().SetMinimumLevel(LogLevel.Information);
+                        builder.AddConsole().SetMinimumLevel(LogLevel.Trace);
                     }),
                     ResponseCallback = monitor.ResponseCallback,
                     //StreamingResponseCallback = monitor.StreamingResultCallback,
@@ -164,7 +167,7 @@ namespace agent_demo01
             return true;
         }
 
-        private ChatCompletionAgent CreateTransportationAgent(Kernel kernel)
+        private ChatCompletionAgent CreateTransportationAgent(AzureOpenAIPromptExecutionSettings settings, string deploymentName, string endpoint, string apiKey)
         {
             ChatCompletionAgent transportationAgent =
                           new()
@@ -173,17 +176,16 @@ namespace agent_demo01
                               Instructions = """
                   You are an expert in finding transportation from a given hotel location to the concert location. You will try to get the best option.
                   that ensures the customers are at least 30 minutes before the concert starts at the venue and you search for options that are most convenient 
-                  and best value for price. You always suggest 3 options with different price ranges. the moment the concierge approves your selection you are allowed to 
-                  book the transportation.
+                  and best value for price. You always suggest 3 options with different price ranges.You will ask for approval before you make the booking
                   """,
                               Description = "An agent that finds transportation options from hotel to concert location",
-                              Kernel = kernel,
+                              Kernel = CreateKernelWithChatCompletionAndtransportFunctions(deploymentName, endpoint, apiKey),
                               LoggerFactory = LoggerFactory.Create(builder =>
                               {
                                   // Add Console logging provider
                                   builder.AddConsole().SetMinimumLevel(logLevel);
                               }),
-                              //Arguments = new KernelArguments(settings)
+                              Arguments = new KernelArguments(settings)
                           };
             return transportationAgent;
         }
@@ -201,13 +203,7 @@ namespace agent_demo01
                               Description = "An agent that finds hotel rooms close to the concert location",
                               Kernel = CreateKernelWithChatCompletionAndHotelFunctions(deploymentName, endpoint, apiKey),
                               LoggerFactory = LoggerFactory.Create(builder =>
-                                builder.AddSimpleConsole(options =>
-                                {
-                                    options.IncludeScopes = true;
-                                    options.SingleLine = true;
-                                    options.TimestampFormat = "HH:mm:ss ";
-                                    options.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Enabled;
-                                }).SetMinimumLevel(LogLevel.Trace)),
+                                builder.AddConsole().SetMinimumLevel(logLevel)),
 
                               Arguments = new KernelArguments(settings)
                               
@@ -224,17 +220,17 @@ namespace agent_demo01
                   Instructions = """
                   
                   You coordinate the booking of hotels and transportation. You critique the provided solutions until you are 
-                  happy with the results. tThe end result is a hotel booked and transportation arranged.
+                  happy with the results. The end result is a hotel booked and transportation booked.
                   
                   """,
-                  Description = "An agent that orchestrates a visit to a music concert including hotel, dinner and transportation",
+                  Description = "An agent that orchestrates a visit to a music concert including hotel and transportation",
                   Kernel = kernel,
                   LoggerFactory = LoggerFactory.Create(builder =>
                   {
                       // Add Console logging provider
                       builder.AddConsole().SetMinimumLevel(logLevel);
                   }),
-                  Arguments = new KernelArguments(settings)
+                  //Arguments = new KernelArguments(settings)
               };
             return conciergeAgent;
         }
@@ -263,6 +259,24 @@ namespace agent_demo01
 
             // add plugin BEFORE building the kernel
             kernelBuilder.Plugins.AddFromType<HotelPlugin>();
+
+            Kernel kernel = kernelBuilder.Build();
+
+            return kernel;
+        }
+
+        public Kernel CreateKernelWithChatCompletionAndtransportFunctions(string deploymentName, string endpoint, string apiKey)
+        {
+            IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
+
+            kernelBuilder.AddAzureOpenAIChatCompletion(deploymentName, endpoint, apiKey);
+            //kernelBuilder.AddAzureAIInferenceChatCompletion(deploymentName, apiKey, new Uri(endpoint));
+
+            kernelBuilder.Services.AddLogging(
+                                 s => s.AddConsole().SetMinimumLevel(logLevel));
+
+            // add plugin BEFORE building the kernel
+            //kernelBuilder.Plugins.AddFromType<TransportationBookings>();
 
             Kernel kernel = kernelBuilder.Build();
 
