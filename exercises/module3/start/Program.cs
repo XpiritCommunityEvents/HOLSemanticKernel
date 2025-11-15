@@ -1,25 +1,25 @@
 ﻿using Microsoft.Extensions.Configuration;
 using modulerag;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
 
-namespace moduleagent
-{
-    internal class Program
-    {
-        static async Task Main(string[] args)
-        {
-            var builder = new ConfigurationBuilder();
-            builder.SetBasePath(Directory.GetCurrentDirectory())
-                   .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                   .AddUserSecrets<Program>();
+var builder = new ConfigurationBuilder();
+builder.SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddUserSecrets<Program>();
 
-            IConfiguration config = builder.Build();
+IConfiguration config = builder.Build();
 
-            var model = config["OpenAI:Model"];
-            var endpoint = config["OpenAI:EndPoint"];
-            var token = config["OpenAI:ApiKey"];
+var model = config["OpenAI:Model"];
+var endpoint = config["OpenAI:EndPoint"];
+var token = config["OpenAI:ApiKey"];
 
+var kernelBuilder = Kernel
+    .CreateBuilder()
+    .AddOpenAIChatCompletion(model, new Uri(endpoint), token);
 
-            await new ChatWithAgent().let_agent_find_ride(model, endpoint, token);
-        }
-    }
-}
+var kernel = kernelBuilder.Build();
+
+await new ChatWithAgent().LetAgentFindRide(kernel);

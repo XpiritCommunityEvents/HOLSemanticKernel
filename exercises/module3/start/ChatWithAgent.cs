@@ -15,19 +15,14 @@ using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using OpenAI;
 
-namespace modulerag
+namespace modulerag;
+
+internal class ChatWithAgent
 {
-    internal class ChatWithAgent
+    public async Task LetAgentFindRide(Kernel kernel)
     {
-
-        public async Task let_agent_find_ride(string deploymentName, string endpoint, string apiKey)
-        {
-            Console.WriteLine("******** Create the kernel ***********");
-            Console.WriteLine("******** Create the agent ***********");
-            Console.WriteLine("******** Start the agent ***********");
-            Console.WriteLine("******** RESPONSE ***********");
-           
-        }
-
+        Console.WriteLine("******** Create the agent ***********");
+        Console.WriteLine("******** Start the agent ***********");
+        Console.WriteLine("******** RESPONSE ***********"); 
     }
 }
