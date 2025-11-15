@@ -1,9 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using modulerag;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.ChatCompletion;
 
 var builder = new ConfigurationBuilder();
 builder.SetBasePath(Directory.GetCurrentDirectory())
@@ -12,4 +8,4 @@ builder.SetBasePath(Directory.GetCurrentDirectory())
 
 IConfiguration config = builder.Build();
 
-await new ChatWithAgent().LetAgentFindRide(config);
+await new ChatWithAgent().LetAgentFindRideAndHotelWithOrchestrator(config);

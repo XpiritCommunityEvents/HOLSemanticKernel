@@ -35,7 +35,7 @@ public async Task let_agent_find_ride_and_hotel_with_orchestrator(IConfiguration
 ```
 
 ### Who is going to approve the hotel and ride bookings?
-We want this system to run autonomous, so we need to have another agent that can approve the suggestions. For this we create an Congierge Agent. This is the same as all the other agents, now with the following instructions:
+We want this system to run autonomous, so we need to have another agent that can approve the suggestions. For this we create an Concierge Agent. This is the same as all the other agents, now with the following instructions:
 
 ```c#
 Instructions = """
@@ -86,13 +86,13 @@ Now we can create the instance of the orchestrator. That looks as follows:
 
 ```c#
 var monitor = new OrchestrationMonitor();
-var handoffs = OrchestrationHandoffs.StartWith(congierge)
-    .Add(congierge, hotelAgent, rideAgent)
-    .Add(congierge, hotelAgent, "Ask this agent to find and book hotel rooms")
-    .Add(congierge, rideAgent, "Ask this agent to find a ride for a specific hotel location")
-    .Add(hotelAgent, congierge, "transfer this agent when the hotel booking is done")
-    .Add(rideAgent, congierge, "transfer this agent when the ride booking is done");            
-    var orchestration = new HandoffOrchestration(handoffs,congierge, hotelAgent, rideAgent)
+var handoffs = OrchestrationHandoffs.StartWith(concierge)
+    .Add(concierge, hotelAgent, rideAgent)
+    .Add(concierge, hotelAgent, "Ask this agent to find and book hotel rooms")
+    .Add(concierge, rideAgent, "Ask this agent to find a ride for a specific hotel location")
+    .Add(hotelAgent, concierge, "transfer this agent when the hotel booking is done")
+    .Add(rideAgent, concierge, "transfer this agent when the ride booking is done");            
+    var orchestration = new HandoffOrchestration(handoffs,concierge, hotelAgent, rideAgent)
     {
         Name = "HotelAndRideBookingOrchestration",
         InteractiveCallback = () =>
