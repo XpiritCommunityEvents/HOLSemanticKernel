@@ -6,7 +6,7 @@
     <RootNamespace>modulerag</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <UserSecretsId>f075df3b-d7ac-425a-a89a-4eccd139bb70</UserSecretsId>
+    <UserSecretsId>dabd1f7a-1cf0-48a8-a5f6-2acc292c8729</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
