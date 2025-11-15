@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
 
@@ -6,8 +7,7 @@ namespace modulerag;
 
 internal class ChatWithAgent
 {
-
-    public async Task LetAgentFindRide(Kernel kernel)
+    public async Task LetAgentFindRide(IConfiguration config)
     {
         var question = """
         I stay at the WestIn Seattle and the venue is the Seattle Kraken stadium.
@@ -15,7 +15,7 @@ internal class ChatWithAgent
         """;
 
         Console.WriteLine("******** Create the agent ***********");
-        var transportationAgent = CreateTransportationAgent(kernel);
+        var transportationAgent = CreateTransportationAgent(config);
 
         Console.WriteLine("******** Start the agent ***********");
         var agentresult = transportationAgent.InvokeAsync(question);
@@ -23,7 +23,6 @@ internal class ChatWithAgent
         Console.WriteLine("******** RESPONSE ***********");
         await PrintResult(agentresult);
     }
-
 
     private static async Task PrintResult(IAsyncEnumerable<AgentResponseItem<ChatMessageContent>> agentResponse)
     {
@@ -37,8 +36,10 @@ internal class ChatWithAgent
         }
     }
 
-    private ChatCompletionAgent CreateTransportationAgent(Kernel kernel)
+    private ChatCompletionAgent CreateTransportationAgent(IConfiguration config)
     {
+        var kernel = CreateKernel(config);
+
         var instructions = """
             You are an expert in finding transportation options from a given hotel location to the concert location.
             You will try to get the best options available for an afordable price.Make sure the customer will be there at least 30 minutes
@@ -59,5 +60,19 @@ internal class ChatWithAgent
             })
         };
         return agent;
+    }
+
+    private static Kernel CreateKernel(IConfiguration config)
+    {
+        var model = config["OpenAI:Model"];
+        var endpoint = config["OpenAI:EndPoint"];
+        var token = config["OpenAI:ApiKey"];
+
+        var kernelBuilder = Kernel
+            .CreateBuilder()
+            .AddOpenAIChatCompletion(model, new Uri(endpoint), token);
+
+        var kernel = kernelBuilder.Build();
+        return kernel;
     }
 }

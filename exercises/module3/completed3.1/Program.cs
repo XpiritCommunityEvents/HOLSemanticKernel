@@ -9,14 +9,4 @@ builder.SetBasePath(Directory.GetCurrentDirectory())
 
 IConfiguration config = builder.Build();
 
-var model = config["OpenAI:Model"];
-var endpoint = config["OpenAI:EndPoint"];
-var token = config["OpenAI:ApiKey"];
-
-var kernelBuilder = Kernel
-    .CreateBuilder()
-    .AddOpenAIChatCompletion(model, new Uri(endpoint), token);
-
-var kernel = kernelBuilder.Build();
-
-await new ChatWithAgent().LetAgentFindRide(kernel);
+await new ChatWithAgent().LetAgentFindRide(config);

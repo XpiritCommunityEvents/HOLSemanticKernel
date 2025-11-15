@@ -18,6 +18,8 @@ The `Program.cs` is similar as in the other exercises where we read the configur
 
 The boilerplate for the method `LetAgentFindRide` is created and you are now going to create an Agent to first have a similar conversation as you had with the `IChatCompletion` interface in the previous excercises.
 
+There is also a `CreateKernel` method that builds a new `Kernel` object using the configuration that is read in `Program.cs`. The reason for doing so is that we are going to reuse this method for every agent we add to our application. Every agent needs its own `Kernel` because they add a different set of plugins and functions to use.
+
 When you run the application the output should look as follows:
 
 ```console
@@ -26,9 +28,11 @@ When you run the application the output should look as follows:
 ******** RESPONSE ***********
 ```
 
-For your convenience, we already gave you the code for initializing the `Kernel` instance in the `Program.cs` and since we use the same `UserSecretsId` for all or C# projects, the `OpenAI:ApiKey` secret should be available for this lab as well. You can validate if this works by simply adding one line in `LetAgentFindRide` for testing purposes and run the program again:
+For your convenience, we already gave you the code for initializing the `Kernel` instance in the `CreateKernel` method and since we use the same `UserSecretsId` for all our C# projects in this Hands On Labs workshop, the `OpenAI:ApiKey` secret should be available for this lab as well. You can validate if this works by simply adding one line in `LetAgentFindRide` for testing purposes and run the program again:
 
 ```c#
+var kernel = CreateKernel(config);
+
 var result = await kernel.InvokePromptAsync("what color is the sky?");
 Console.WriteLine(result);
 ```
@@ -38,9 +42,9 @@ Console.WriteLine(result);
 Now add a function where you pass in the kernel object and return a `ChatCompletionAgent`, name the fuction `CreateTransportationAgent`:
 
 ```csharp
-private ChatCompletionAgent CreateTransportationAgent(Kernel kernel)
+private ChatCompletionAgent CreateTransportationAgent(IConfiguration config)
 {
-
+    var kernel = CreateKernel(config);
 }
 ```
 
