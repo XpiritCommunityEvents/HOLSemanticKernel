@@ -9,7 +9,7 @@ namespace GloboTicket.Frontend.Services.AI;
 /// </summary>
 internal static class AgentThreadRepository
 {
-    private static ConcurrentDictionary<string, AgentThread> _threads = [];
+    private static readonly ConcurrentDictionary<string, AgentThread> _threads = [];
 
     /// <summary>
     /// Gets or creates an AgentThread for the given session ID.
