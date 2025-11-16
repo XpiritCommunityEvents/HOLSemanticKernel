@@ -24,6 +24,7 @@ internal static class ServiceCollectionExtensions
         {
             var kernelBuilder = Kernel
                 .CreateBuilder()
+                .UseTelemetry("GloboTicketFrontend", configuration)
                 .AddOpenAIChatCompletion(model!, new Uri(endpoint!), key!);
             kernelBuilder.Plugins.AddFromType<Microsoft.SemanticKernel.Plugins.Core.TimePlugin>();
 
