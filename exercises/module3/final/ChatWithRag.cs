@@ -43,7 +43,7 @@ namespace modulerag
 
         public async Task IngestDocuments(string deploymentName, string endpoint, string apiKey, IConfiguration config)
         {
-            var directory = "/workspaces/HOLSemanticKernel/exercises/module4/datasets/venue-policies";
+            var directory = "../../../../datasets/venue-policies";
             var memoryConnector = GetLocalKernelMemory(deploymentName, endpoint, apiKey);
 
             foreach (var file in GetFileListOfPolicyDocuments(directory))
@@ -126,7 +126,7 @@ namespace modulerag
         private async Task<string> GetFileContentsFromRepo(Kernel kernel, string venueName)
         {
             //Get a list of files from the venue policy repository
-            var directory = "/workspaces/HOLSemanticKernel/exercises/module4/datasets/venue-policies";
+            var directory = "../../../../datasets/venue-policies";
             var fileList = string.Join("\n", System.IO.Directory.GetFiles(directory, "*.md").Select(f => System.IO.Path.GetFileName(f)));
 
             var systemprompt = "You are an expert at finding the correct file based on a user question.";
