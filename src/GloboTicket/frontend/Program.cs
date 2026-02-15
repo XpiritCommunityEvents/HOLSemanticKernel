@@ -34,7 +34,6 @@ builder.Services.AddHttpClient(Options.DefaultName)
     .UseHttpClientMetrics();
 
 builder.Services.AddSingleton<Settings>();
-builder.Services.AddApplicationInsightsTelemetry();
 
 builder.Services.AddSignalR();
 
