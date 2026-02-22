@@ -19,15 +19,9 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
     <PackageReference Include="Microsoft.SemanticKernel.Agents.Abstractions" />
-    <PackageReference Include="Microsoft.SemanticKernel.Agents.AzureAI" />
     <PackageReference Include="Microsoft.SemanticKernel.Agents.Core" />
-    <PackageReference Include="Microsoft.SemanticKernel.Agents.Magentic" />
     <PackageReference Include="Microsoft.SemanticKernel.Agents.Orchestration" />
     <PackageReference Include="Microsoft.SemanticKernel.Agents.Runtime.InProcess" />
-    <PackageReference Include="Microsoft.SemanticKernel.Plugins.Web" />
-    <PackageReference Include="Microsoft.KernelMemory.SemanticKernelPlugin" />
-    <PackageReference Include="Azure.AI.OpenAI" />
-    <PackageReference Include="ModelContextProtocol" />
   </ItemGroup>
 
   <ItemGroup>

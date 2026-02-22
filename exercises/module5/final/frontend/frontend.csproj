@@ -8,7 +8,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.System" />
-    <PackageReference Include="AspNetCore.HealthChecks.ApplicationStatus" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" />
     <PackageReference Include="Microsoft.SemanticKernel" />
@@ -16,8 +15,6 @@
     <PackageReference Include="Microsoft.SemanticKernel.Plugins.Core" />
     <PackageReference Include="ModelContextProtocol" />
     <PackageReference Include="prometheus-net.AspNetCore" />
-    <PackageReference Include="prometheus-net.AspNetCore.HealthChecks" />
-    <PackageReference Include="Prometheus.Client.AspNetCore" />
     <PackageReference Include="WolverineFx" />
     <PackageReference Include="OpenTelemetry" />
     <PackageReference Include="OpenTelemetry.Exporter.Console" />
