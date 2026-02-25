@@ -23,7 +23,7 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.3" />
     <PackageVersion Include="Microsoft.KernelMemory" Version="0.98.250508.3" />
     <PackageVersion Include="Microsoft.KernelMemory.AI.OpenAI" Version="0.98.250508.3" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
     <PackageVersion Include="Microsoft.SemanticKernel" Version="1.72.0" />
     <PackageVersion Include="Microsoft.SemanticKernel.Agents.Abstractions" Version="1.72.0" />
     <PackageVersion Include="Microsoft.SemanticKernel.Agents.Core" Version="1.72.0" />
@@ -32,8 +32,8 @@
     <PackageVersion Include="Microsoft.SemanticKernel.Plugins.Core" Version="1.72.0-preview" />
     <PackageVersion Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.72.0" />
     <PackageVersion Include="Microsoft.SemanticKernel.Yaml" Version="1.72.0" />
-    <PackageVersion Include="ModelContextProtocol" Version="0.9.0-preview.2" />
-    <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="0.9.0-preview.2" />
+    <PackageVersion Include="ModelContextProtocol" Version="1.0.0" />
+    <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="1.0.0" />
     <PackageVersion Include="MSTest.TestAdapter" Version="4.1.0" />
     <PackageVersion Include="MSTest.TestFramework" Version="4.1.0" />
     <PackageVersion Include="OpenTelemetry" Version="1.15.0" />
