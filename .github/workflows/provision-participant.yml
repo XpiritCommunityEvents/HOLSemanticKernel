@@ -42,21 +42,6 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.VSLIVE_REPOCREATE }}
 
-    - name: Create Repository
-      env:
-        GH_TOKEN: ${{ secrets.VSLIVE_REPOCREATE }}
-      run: |
-        # Create clone of this repo for user
-        repo_name="XpiritCommunityEvents/attendee-workshopSK-${{ steps.github_handle.outputs.result }}"
-        if gh repo view $repo_name &>/dev/null; then
-            echo "Repository $repo_name already exists."
-        else
-          echo "Repository $REPO_NAME does not exist."
-          gh repo create $repo_name \
-            --public \
-            --template ${{ github.repository }}
-        fi
-          
     - name: Invite Member to Organization
       env:
         GH_TOKEN: ${{ secrets.VSLIVE_REPOCREATE }}
@@ -64,10 +49,3 @@ jobs:
         id=$(gh api users/${{ steps.github_handle.outputs.result }} --jq '.id')
         gh api --method POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/XpiritCommunityEvents/invitations -F invitee_id=$id -f role='direct_member'
 
-    - name: Set Rights to Repo
-      env:
-        GH_TOKEN: ${{ secrets.VSLIVE_REPOCREATE }}
-      run: |
-        # Add user to newly cloned repo
-        gh repo-collab add XpiritCommunityEvents/attendee-workshopSK-${{ steps.github_handle.outputs.result }} ${{ steps.github_handle.outputs.result }} --permission admin | cat
-    
