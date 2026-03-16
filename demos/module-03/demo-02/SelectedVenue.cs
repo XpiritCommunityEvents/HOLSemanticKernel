@@ -1,6 +1,10 @@
-namespace modulerag;
+using System;
 
-public class SelectedVenue
+namespace modulerag
 {
-    public required string VenueName { get; set; }
+
+    public class SelectedVenue
+    {
+        public string venueName { get; set; }
+    }
 }

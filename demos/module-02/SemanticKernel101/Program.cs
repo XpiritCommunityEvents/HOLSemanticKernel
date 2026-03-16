@@ -16,8 +16,8 @@ var config = new ConfigurationBuilder()
     .Build();
 
 var token = config["OpenAI:ApiKey"] ?? throw new InvalidOperationException("Missing API Key");
-var model = "openai/gpt-4o";
-var endpoint = "https://models.github.ai/orgs/XpiritCommunityEvents/inference";
+var model = "gpt-4o";
+var endpoint = "https://marce-mms9ozyh-eastus2.cognitiveservices.azure.com/";
 
 // Use Azure AI Foundry
 // var model = "gpt-4o";
@@ -26,8 +26,7 @@ var endpoint = "https://models.github.ai/orgs/XpiritCommunityEvents/inference";
 var kernelBuilder = Kernel
     .CreateBuilder()
     //.UseTelemetry("SemanticKernel101", config)
-    //.AddAzureOpenAIChatCompletion(model, endpoint, token);
-    .AddOpenAIChatCompletion(model, new Uri(endpoint), token);
+    .AddAzureOpenAIChatCompletion(model, endpoint, token);
 
 kernelBuilder.Services.AddTransient<IFunctionInvocationFilter, AnonymousUserFilter>();
 

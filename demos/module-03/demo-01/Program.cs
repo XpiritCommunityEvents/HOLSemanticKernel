@@ -1,4 +1,5 @@
-﻿using System.ClientModel;
+﻿using Azure;
+using Azure.AI.OpenAI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel;
 using modulerag;
@@ -14,9 +15,10 @@ var model = config["OpenAI:Model"];
 var endpoint = config["OpenAI:EndPoint"];
 var token = config["OpenAI:ApiKey"];
 
+var client = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(token));
 var kernelBuilder = Kernel
     .CreateBuilder()
-    .AddOpenAIChatCompletion(model, new Uri(endpoint), token);
+    .AddAzureOpenAIChatCompletion(model, client);
 
 var kernel = kernelBuilder.Build();
 

@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
-using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Agents.Orchestration.Handoff;
-using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel.Agents.Orchestration;
+using Microsoft.SemanticKernel.Agents.Orchestration.Handoff;
 using Microsoft.SemanticKernel.Agents.Runtime.InProcess;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 #pragma warning disable SKEXP0110 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
@@ -117,7 +116,7 @@ internal class ChatWithAgent
         var token = config["OpenAI:ApiKey"];
         var kernelBuilder = Kernel
             .CreateBuilder()
-            .AddOpenAIChatCompletion(model, new Uri(endpoint), token);
+            .AddAzureOpenAIChatCompletion(model, endpoint, token);
         var kernel = kernelBuilder.Build();
         return kernel;
     }

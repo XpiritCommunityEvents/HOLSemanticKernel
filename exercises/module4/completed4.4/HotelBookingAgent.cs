@@ -40,7 +40,7 @@ internal class HotelBookingAgent
         var token = config["OpenAI:ApiKey"];
         var kernelBuilder = Kernel
             .CreateBuilder()
-            .AddOpenAIChatCompletion(model, new Uri(endpoint), token);
+            .AddAzureOpenAIChatCompletion(model, endpoint, token);
         var kernel = kernelBuilder.Build();
         return kernel;
     }
