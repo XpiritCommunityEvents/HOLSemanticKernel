@@ -1,10 +1,8 @@
-using System;
+using Microsoft.Extensions.VectorData;
 
-namespace modulerag
+namespace modulerag;
+
+public class SelectedFile
 {
-
-    public class SelectedFile
-    {
-        public string file { get; set; }
-    }
+    public string file { get; set; }
 }
