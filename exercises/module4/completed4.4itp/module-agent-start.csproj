@@ -21,7 +21,6 @@
     <PackageReference Include="Microsoft.SemanticKernel.Agents.Orchestration" />
     <PackageReference Include="Microsoft.SemanticKernel.Agents.Runtime.InProcess" />
     <PackageReference Include="Azure.AI.OpenAI" />
-    <PackageReference Include="ModelContextProtocol" />
   </ItemGroup>
 
   <ItemGroup>
