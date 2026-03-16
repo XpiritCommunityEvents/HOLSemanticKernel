@@ -8,7 +8,7 @@ public class AnonymousUserFilter : IFunctionInvocationFilter
     {
         if (context.Function.Name == "get_discount_code")
         {
-            if (context.Arguments.TryGetValue("userName", out var userName) && userName!.ToString() == "guest")
+            if (!context.Arguments.TryGetValue("userName", out var userName) || userName?.ToString() == "guest")
             {
                 context.Result = new FunctionResult(context.Function, "No discounts for anonymous users allowed");
                 return;
