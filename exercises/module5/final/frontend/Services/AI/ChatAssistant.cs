@@ -1,6 +1,6 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 
 namespace GloboTicket.Frontend.Services.AI;
 
@@ -27,7 +27,7 @@ public static class ChatAssistant
             Instructions = instructions,
             Description = "A chat agent that assists GloboTicket users with their questions and requests",
             Kernel = kernel,
-            Arguments = new KernelArguments(new OpenAIPromptExecutionSettings()
+            Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings()
             {
                 FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
             }),

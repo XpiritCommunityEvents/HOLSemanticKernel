@@ -172,7 +172,7 @@ internal class ChatWithRag
         chatHistory.AddUserMessage(fileListPrompt);
         chatHistory.AddUserMessage(fileQuestion);
 
-        var executionSettings = new OpenAIPromptExecutionSettings
+        var executionSettings = new AzureOpenAIPromptExecutionSettings
         {
             ResponseFormat = typeof(SelectedFile)
         };

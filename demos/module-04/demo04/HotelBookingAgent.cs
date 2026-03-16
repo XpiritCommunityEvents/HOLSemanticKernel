@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 
 namespace modulerag;
 
@@ -25,7 +25,7 @@ internal class HotelBookingAgent
                 """,
             Description = "An agent that finds and books a hotel room close to the concert location",
             Kernel = kernel,
-            Arguments = new KernelArguments(new OpenAIPromptExecutionSettings()
+            Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings()
             {
                 FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
             })

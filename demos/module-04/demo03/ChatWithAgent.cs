@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 
 namespace modulerag;
 
@@ -70,7 +70,7 @@ internal class ChatWithAgent
             Instructions = instructions,
             Description = "An agent that finds transportation options from hotel to concert location",
             Kernel = kernel,
-            Arguments = new KernelArguments(new OpenAIPromptExecutionSettings()
+            Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings()
             {
                 FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
             }),

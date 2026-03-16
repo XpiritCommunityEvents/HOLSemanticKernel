@@ -4,7 +4,7 @@ using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 using System.Text.Json;
 
 namespace modulerag;
@@ -172,7 +172,7 @@ internal class ChatWithRag
         chatHistory.AddUserMessage(fileListPrompt);
         chatHistory.AddUserMessage(fileQuestion);
 
-        var executionSettings = new OpenAIPromptExecutionSettings
+        var executionSettings = new AzureOpenAIPromptExecutionSettings
         {
             ResponseFormat = typeof(SelectedFile)
         };

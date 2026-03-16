@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
 using ModelContextProtocol.Client;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 using Microsoft.Extensions.Logging;
 
 // Make sure to add ApiKey to your dotnet user secrets...
@@ -55,7 +55,7 @@ var musicRecommender = kernel.CreateFunctionFromPromptYaml(
     });
 kernel.ImportPluginFromFunctions("music_recommender", [musicRecommender]);
 
-var executionSettings = new OpenAIPromptExecutionSettings
+var executionSettings = new AzureOpenAIPromptExecutionSettings
 {
     MaxTokens = 500,
     Temperature = 0.5,

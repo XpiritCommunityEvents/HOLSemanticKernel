@@ -1,9 +1,9 @@
-﻿using Microsoft.SemanticKernel;
+﻿using HOLSemanticKernel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
-using HOLSemanticKernel;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 
 // Make sure to add ApiKey to your dotnet user secrets...
 // dotnet user-secrets set "ApiKey"="<your API key>" -p .\module2.csproj
@@ -19,10 +19,6 @@ var token = config["OpenAI:ApiKey"] ?? throw new InvalidOperationException("Miss
 var model = "gpt-4o";
 var endpoint = "https://marce-mms9ozyh-eastus2.cognitiveservices.azure.com/";
 
-// Use Azure AI Foundry
-// var model = "gpt-4o";
-// var endpoint = "https://vries-mfc1t50l-swedencentral.cognitiveservices.azure.com";
-
 var kernelBuilder = Kernel
     .CreateBuilder()
     //.UseTelemetry("SemanticKernel101", config)
@@ -35,7 +31,7 @@ var kernel = kernelBuilder.Build();
 kernel.ImportPluginFromType<Microsoft.SemanticKernel.Plugins.Core.TimePlugin>();
 kernel.ImportPluginFromType<DiscountPlugin>();
 
-var executionSettings = new OpenAIPromptExecutionSettings
+var executionSettings = new AzureOpenAIPromptExecutionSettings
 {
     MaxTokens = 500,
     Temperature = 0.5,

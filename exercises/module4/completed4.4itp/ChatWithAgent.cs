@@ -6,7 +6,6 @@ using Microsoft.SemanticKernel.Agents.Orchestration.Handoff;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel.Agents.Orchestration;
 using Microsoft.SemanticKernel.Agents.Runtime.InProcess;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 #pragma warning disable SKEXP0110 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 

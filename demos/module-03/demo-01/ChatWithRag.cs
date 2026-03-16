@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 
 namespace modulerag;
 
@@ -42,7 +42,7 @@ public class ChatWithRag
         chatHistory.AddUserMessage(fileListPrompt);
         chatHistory.AddUserMessage(fileQuestion);
 
-        var executionSettings = new OpenAIPromptExecutionSettings
+        var executionSettings = new AzureOpenAIPromptExecutionSettings
         {
             ResponseFormat = typeof(SelectedFile)
         };
@@ -71,7 +71,7 @@ public class ChatWithRag
         chatHistory.AddSystemMessage("You are a helpful asistant that finds the name of a venue from a question.");
         chatHistory.AddSystemMessage("Always get the information from the question. Never search the web or use internal knowledge!");
         chatHistory.AddUserMessage(question);
-        var executionSettings = new OpenAIPromptExecutionSettings
+        var executionSettings = new AzureOpenAIPromptExecutionSettings
         {
             ResponseFormat = typeof(SelectedVenue)
         };
