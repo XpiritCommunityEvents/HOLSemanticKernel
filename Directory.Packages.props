@@ -42,6 +42,6 @@
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.0" />
     <PackageVersion Include="prometheus-net.AspNetCore" Version="8.2.1" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.1.5" />
-    <PackageVersion Include="WolverineFx" Version="5.19.0" />
+    <PackageVersion Include="WolverineFx" Version="5.19.1" />
   </ItemGroup>
 </Project>
