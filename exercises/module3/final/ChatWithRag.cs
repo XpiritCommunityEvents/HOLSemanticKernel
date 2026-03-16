@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace modulerag;
 
-internal class ChatWithRag
+public class ChatWithRag
 {
     public async Task RAG_with_single_prompt(Kernel kernel)
     {
