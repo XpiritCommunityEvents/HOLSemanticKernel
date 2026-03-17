@@ -1,12 +1,12 @@
-using GloboTicket.Frontend.Services;
-using GloboTicket.Frontend.Models;
-using GloboTicket.Frontend.Services.Ordering;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Prometheus;
-using HealthChecks.UI.Client;
 using GloboTicket.Frontend.HealthChecks;
-using Microsoft.Extensions.Options;
+using GloboTicket.Frontend.Models;
+using GloboTicket.Frontend.Services;
 using GloboTicket.Frontend.Services.AI;
+using GloboTicket.Frontend.Services.Ordering;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
+using Prometheus;
 using Wolverine;
 
 var builder = WebApplication.CreateBuilder(args);
