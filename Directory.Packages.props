@@ -8,7 +8,7 @@
     <PackageVersion Include="Azure.AI.Inference" Version="1.0.0-beta.5" />
     <PackageVersion Include="Azure.AI.OpenAI" Version="2.9.0-beta.1" />
     <PackageVersion Include="Azure.Identity" Version="1.18.0" />
-    <PackageVersion Include="coverlet.collector" Version="8.0.0" />
+    <PackageVersion Include="coverlet.collector" Version="8.0.1" />
     <PackageVersion Include="LiquidTestReports.Markdown" Version="1.0.9" />
     <PackageVersion Include="MarkdownStructureChunker" Version="1.0.7" />
     <PackageVersion Include="Microsoft.AspNetCore.SignalR" Version="1.2.9" />
@@ -24,15 +24,15 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.5" />
     <PackageVersion Include="Microsoft.Extensions.VectorData.Abstractions" Version="10.0.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
-    <PackageVersion Include="Microsoft.SemanticKernel" Version="1.73.0" />
-    <PackageVersion Include="Microsoft.SemanticKernel.Agents.Abstractions" Version="1.73.0" />
-    <PackageVersion Include="Microsoft.SemanticKernel.Agents.Core" Version="1.73.0" />
-    <PackageVersion Include="Microsoft.SemanticKernel.Agents.Orchestration" Version="1.73.0-preview" />
-    <PackageVersion Include="Microsoft.SemanticKernel.Agents.Runtime.InProcess" Version="1.73.0-preview" />
-    <PackageVersion Include="Microsoft.SemanticKernel.Connectors.InMemory" Version="1.73.0-preview" />
-    <PackageVersion Include="Microsoft.SemanticKernel.Plugins.Core" Version="1.73.0-preview" />
-    <PackageVersion Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.73.0" />
-    <PackageVersion Include="Microsoft.SemanticKernel.Yaml" Version="1.73.0" />
+    <PackageVersion Include="Microsoft.SemanticKernel" Version="1.74.0" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Agents.Abstractions" Version="1.74.0" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Agents.Core" Version="1.74.0" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Agents.Orchestration" Version="1.74.0-preview" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Agents.Runtime.InProcess" Version="1.74.0-preview" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Connectors.InMemory" Version="1.74.0-preview" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Plugins.Core" Version="1.74.0-preview" />
+    <PackageVersion Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.74.0" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Yaml" Version="1.74.0" />
     <PackageVersion Include="ModelContextProtocol" Version="1.1.0" />
     <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="1.1.0" />
     <PackageVersion Include="MSTest.TestAdapter" Version="4.1.0" />
@@ -42,6 +42,6 @@
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.0" />
     <PackageVersion Include="prometheus-net.AspNetCore" Version="8.2.1" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.1.5" />
-    <PackageVersion Include="WolverineFx" Version="5.19.1" />
+    <PackageVersion Include="WolverineFx" Version="5.22.0" />
   </ItemGroup>
 </Project>
